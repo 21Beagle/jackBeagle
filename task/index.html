@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
+
         <meta charset="utf-8">
         <title>HTML Task APIs</title>
         <meta name="author" content="21Beagle">
@@ -13,6 +13,110 @@
 
     </head>
     <body>
+        <h1 class="title">
+            HTML Task APIs
+        </h1>
+        <div class="table">
+            <section class="container">
+                <h2 class="item">API Name</h2>
+                <h2 class="item">API Description</h2>
+                <h2 class="item"></h2>
+            </section>
+            <section class="container">
+                <h3 class="item">1. </h2>
+                <h3 class="item"></h2>
+                <h3 class="item"></h2>
+            </section>
+            <section class="container">
+                <h3 class="item">2. </h2>
+                <h3 class="item"></h2>
+                <h3 class="item"></h2>
+            </section>
+            <section class="container">
+                <h3 class="item">3. </h2>
+                <h3 class="item"></h2>
+                <h3 class="item"></h2>
+            </section>   
+        </div>
+        <h4>Results:</h4>
 
+        <select id="selCountry">
+			<option value="GB">Great Britain</option>
+			<option value="FR">France</option>
+			<option value="DE">Germany</option>
+			<option value="US">USA</option>
+		</select>
+
+		<select id="selLanguage">
+			<option value="en">English</option>
+			<option value="fr">Francais</option>
+			<option value="de">Deutsche</option>
+		</select>
+
+		<button id="btnRun">Run</button>
+
+		<br><br>
+
+		<div id="divResults">
+			
+			<table>
+
+				<tr>
+					<td align="right">
+						Continent: 
+					</td>
+					<td id="txtContinent">
+						
+					</td>
+
+				</tr>
+
+				<tr>
+					<td align="right">
+						Capital: 
+					</td>
+					<td id="txtCapital">
+						
+					</td>
+
+				</tr>
+
+				<tr>
+					<td align="right">
+						Languages: 
+					</td>
+					<td id="txtLanguages">
+						
+					</td>
+
+				</tr>
+
+				<tr>
+					<td align="right">
+						Population: 
+					</td>
+					<td id="txtPopulation">
+						
+					</td>
+
+				</tr>
+
+				<tr>
+					<td align="right">
+						Area (km<sup>2</sup>): 
+					</td>
+					<td id="txtArea">
+						
+					</td>
+
+				</tr>
+
+
+			</table>
+
+		</div>
+
+        <script type="application/javascript" src="js/jquery-2.2.3.min.js"></script>
+		<script type="application/javascript" src="js/script.js"></script>
     </body>
 </html>
