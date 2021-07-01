@@ -24,87 +24,236 @@
             </section>
             <section class="container">
                 <h3 class="item">1. Ocean namer </h2>
-                <h3 class="item"> The name of the ocean or sea. Input latitude and longitude and will return the name of the sea at the location </h2>
+                <p class="item"> The name of the ocean or sea. Input latitude and longitude and will return the name of the sea at the location </p>
                 <h3 class="item">
 					
-						Lattitude <input type="number" id="lat" name="lat" min="-90" max="90" required> <br>
+						Lattitude <input type="number" id="latOcean" name="lat" min="-90" max="90" required> <br>
 
-						Longitude <input type="number" id="lng" name="lng" min="0" max="180" required> <br>
-						<button type="submit" id="btnRun">Button </button>
+						Longitude <input type="number" id="lngOcean" name="lng" min="0" max="180" required> <br>
+						<button type="submit" id="btnRunOcean">Ocean Button </button>
 					
-				</h2>
+				</h3>
             </section>
             <section class="container">
-                <h3 class="item">2. </h2>
-                <h3 class="item"></h2>
-                <h3 class="item"></h2>
+                <h3 class="item">2. Weather</h2>
+                <p class="item">Returns the weather at nearest weather station to location given by lattitude and longitude</p>
+                <h3 class="item">
+					
+					Lattitude <input type="number" id="latWeather" name="lat" min="-90" max="90" required> <br>
+
+					Longitude <input type="number" id="lngWeather" name="lng" min="0" max="180" required> <br>
+					<button type="submit" id="btnRunWeather">Weather Button </button>
+				
+			</h3>
             </section>
             <section class="container">
-                <h3 class="item">3. </h2>
-                <h3 class="item"></h2>
-                <h3 class="item"></h2>
+                <h3 class="item">3. findNearbyPlaceName</h2>
+                <p class="item">Return information of nearby place. Takes in lattitude and longitude</p>
+                <h3 class="item">
+					
+					Lattitude <input type="number" id="latPlace" name="lat" min="-90" max="90" required> <br>
+
+					Longitude <input type="number" id="lngPlace" name="lng" min="0" max="180" required> <br>
+					<button type="submit" id="btnRunPlace">Place Button </button>
+				
+			</h3>
             </section>   
         </div>
         <h4>Results:</h4>
 
-        <select id="selCountry">
-			<option value="GB">Great Britain</option>
-			<option value="FR">France</option>
-			<option value="DE">Germany</option>
-			<option value="US">USA</option>
-		</select>
-
-		<select id="selLanguage">
-			<option value="en">English</option>
-			<option value="fr">Francais</option>
-			<option value="de">Deutsche</option>
-		</select>
-
-		<button id="btnRun">Run</button>
-
-		<br><br>
-
-		<div id="divResults">
+		<br>
+		<div class="container">
+			<div class="itemTable" id="divResults">
 			
-			<table>
+				<table >
+					<caption>Ocean</caption>
+					<tr>
+						<td >
+							Name of ocean: 
+						</td>
+						<td id="txtOcean">
+							
+						</td>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Latitude: 
+						</td>
+						<td id="txtLatOcean">
+							
+						</td>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Longitiude: 
+						</td>
+						<td id="txtLngOcean">
+							
+						</td>
+	
+					</tr>
+	
+	
+	
+				</table>
+	
+			</div>
+	
+	
+	
+			<div class="itemTable" id="divResults">
+				
+				<table >
+					<caption>Weather</caption>
+					<tr>
+						<td >
+							Weather: 
+						</td>
+						<td id="txtWeatherObs">
+							
+						</td>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Clouds: 
+						</td>
+						<td id="txtWeatherClouds">
+							
+						</td>
+	
+					</tr>
+					<tr>
+						<td >
+							Temperature: 
+						</td>
+						<td id="txtWeatherTemp">
+							
+						</td>
+					<tr>
+						<td >
+								Nearest Station: 
+						</td>
+						<td id="txtWeatherStation">
+							
+						</td>
+		
+					</tr>
+					<tr>
+						<td >
+								Country Code: 
+						</td>
+						<td id="txtWeatherCountry">
+				
+						</td>
+		
+					</tr>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Latitude: 
+						</td>
+						<td id="txtLatWeather">
+							
+						</td>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Longitiude: 
+						</td>
+						<td id="txtLngWeather">
+							
+						</td>
+	
+					</tr>
+	
+	
+	
+				</table>
+	
+			</div>
 
-				<tr>
-					<td align="right">
-						Name of ocean: 
-					</td>
-					<td id="txtOcean">
-						
-					</td>
-
-				</tr>
-
-				<tr>
-					<td align="right">
-						Latitude: 
-					</td>
-					<td id="txtLat">
-						
-					</td>
-
-				</tr>
-
-				<tr>
-					<td align="right">
-						Longitiude: 
-					</td>
-					<td id="txtLng">
-						
-					</td>
-
-				</tr>
-
-
-
-			</table>
-
+			<div class="itemTable" id="divResults">
+				
+				<table >
+					<caption>Place</caption>
+					<tr>
+						<td >
+							Name: 
+						</td>
+						<td id="txtPlace">
+							
+						</td>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Description: 
+						</td>
+						<td id="txtPlaceDescription">
+							
+						</td>
+	
+					</tr>
+					<tr>
+						<td >
+							Country: 
+						</td>
+						<td id="txtPlaceCountry">
+							
+						</td>
+					</tr>
+					<tr>
+						<td >
+								Continient: 
+						</td>
+						<td id="txtPlaceCont">
+							
+						</td>
+		
+					</tr>
+					<tr>
+						<td >
+							Latitude: 
+						</td>
+						<td id="txtLatPlace">
+							
+						</td>
+	
+					</tr>
+	
+					<tr>
+						<td >
+							Longitiude: 
+						</td>
+						<td id="txtLngPlace">
+							
+						</td>
+	
+					</tr>
+	
+	
+	
+	
+				</table>
+	
+			</div>
 		</div>
+		
 
         <script type="application/javascript" src="js/jquery-2.2.3.min.js"></script>
-		<script type="application/javascript" src="js/script.js"></script>
+		<script type="application/javascript" src="js/Ocean.js"></script>
+		<script type="application/javascript" src="js/Weather.js"></script>
+		<script type="application/javascript" src="js/Place.js"></script>
     </body>
 </html>
