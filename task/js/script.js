@@ -1,30 +1,33 @@
 	$('#btnRun').click(function() {
-
+		console.log("button clicked", $('#lat').val(), $('#lng').val())
 		$.ajax({
-			url: "php/getCountryInfo.php",
+			url: "php/oceans.php",
 			type: 'POST',
 			dataType: 'json',
 			data: {
-				country: $('#selCountry').val(),
-				lang: $('#selLanguage').val()
+				lat: $('#lat').val(),
+				lng: $('#lng').val()
 			},
+			
 			success: function(result) {
-
 				console.log(JSON.stringify(result));
-
+				console.log(result['data']['name'])
+				$('#txtLat').html($('#lat').val())
+				$('#txtLng').html($('#lng').val())
 				if (result.status.name == "ok") {
-
-					$('#txtContinent').html(result['data'][0]['continent']);
-					$('#txtCapital').html(result['data'][0]['capital']);
-					$('#txtLanguages').html(result['data'][0]['languages']);
-					$('#txtPopulation').html(result['data'][0]['population']);
-					$('#txtArea').html(result['data'][0]['areaInSqKm']);
+					$('#txtLat').html($('#lat').val())
+					$('#txtLng').html($('#lng').val())
+					$('#txtOcean').html(result['data']['name']);
+					console.log(result['data']['name'])
 
 				}
 			
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				// your error code
+				console.log(JSON.stringify(result));
+				$('#txtOcean').html('There is no sea or ocean at this spot');
+				$('#txtLat').html($('#lat').val())
+				$('#txtLng').html($('#lng').val())
 			}
 		}); 
 	

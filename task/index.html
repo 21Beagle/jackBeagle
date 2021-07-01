@@ -9,7 +9,7 @@
         <meta name="viewport" content=" width=device-width, initial-scale=1">
 
         <link href="favicon.ico" rel="icon">
-        <link href="css/style.css" rel="stylesheet">
+        <link href="./css/style.css" rel="stylesheet">
 
     </head>
     <body>
@@ -23,9 +23,16 @@
                 <h2 class="item"></h2>
             </section>
             <section class="container">
-                <h3 class="item">1. </h2>
-                <h3 class="item"></h2>
-                <h3 class="item"></h2>
+                <h3 class="item">1. Ocean namer </h2>
+                <h3 class="item"> The name of the ocean or sea. Input latitude and longitude and will return the name of the sea at the location </h2>
+                <h3 class="item">
+					
+						Lattitude <input type="number" id="lat" name="lat" min="-90" max="90" required> <br>
+
+						Longitude <input type="number" id="lng" name="lng" min="0" max="180" required> <br>
+						<button type="submit" id="btnRun">Button </button>
+					
+				</h2>
             </section>
             <section class="container">
                 <h3 class="item">2. </h2>
@@ -63,9 +70,9 @@
 
 				<tr>
 					<td align="right">
-						Continent: 
+						Name of ocean: 
 					</td>
-					<td id="txtContinent">
+					<td id="txtOcean">
 						
 					</td>
 
@@ -73,9 +80,9 @@
 
 				<tr>
 					<td align="right">
-						Capital: 
+						Latitude: 
 					</td>
-					<td id="txtCapital">
+					<td id="txtLat">
 						
 					</td>
 
@@ -83,33 +90,14 @@
 
 				<tr>
 					<td align="right">
-						Languages: 
+						Longitiude: 
 					</td>
-					<td id="txtLanguages">
+					<td id="txtLng">
 						
 					</td>
 
 				</tr>
 
-				<tr>
-					<td align="right">
-						Population: 
-					</td>
-					<td id="txtPopulation">
-						
-					</td>
-
-				</tr>
-
-				<tr>
-					<td align="right">
-						Area (km<sup>2</sup>): 
-					</td>
-					<td id="txtArea">
-						
-					</td>
-
-				</tr>
 
 
 			</table>

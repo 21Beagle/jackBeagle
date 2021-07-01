@@ -1,13 +1,16 @@
 *{
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
 }
 
 h2 {
     text-align: center;
+
 }
 
 h4 {
     text-align: center;
+    color: red;
 }
 
 .title {
@@ -21,30 +24,33 @@ h4 {
     border: black 2px solid;
     display: flex;
     flex-direction: column;
-    
+    flex-grow: 1;
     width: 60%;
 
 }
 
 .container{
+    margin: 0;
+    border: black 1px solid;
     display: flex;
+    flex-grow: 1;
+    height: fit-content;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
+    flex-grow: 1;
 }
 
 .item {
-    width: 33%;
+    width: 33.333%;
+    height: 200px;
     justify-content: center;
     text-align: center;
-    height: 50px;
-    margin: auto;
-    margin-left: auto;
-    margin-right: auto;
-    border: black 1px solid;
+    margin: 0;
+    border: black 2px solid;
     display: flex;
     align-self: center;
-    flex-grow: 1;
+    flex-direction: column;
 }
