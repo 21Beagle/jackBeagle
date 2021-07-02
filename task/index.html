@@ -24,7 +24,7 @@
             </section>
             <section class="container">
                 <h3 class="item">1. Ocean namer </h2>
-                <p class="item"> The name of the ocean or sea. Input latitude and longitude and will return the name of the sea at the location </p>
+                <p class="item"> The name of the ocean or sea. Input latitude and longitude and will return the name of the sea at the location Type in (0,0) for a result </p>
                 <h3 class="item">
 					
 						Lattitude <input type="number" id="latOcean" name="lat" min="-90" max="90" required> <br>
@@ -36,7 +36,8 @@
             </section>
             <section class="container">
                 <h3 class="item">2. Weather</h2>
-                <p class="item">Returns the weather at nearest weather station to location given by lattitude and longitude</p>
+                <p class="item">Returns the weather at nearest weather station to location given by lattitude and longitude. Type in (0,0) for a result
+				</p>
                 <h3 class="item">
 					
 					Lattitude <input type="number" id="latWeather" name="lat" min="-90" max="90" required> <br>
@@ -48,7 +49,9 @@
             </section>
             <section class="container">
                 <h3 class="item">3. findNearbyPlaceName</h2>
-                <p class="item">Return information of nearby place. Takes in lattitude and longitude</p>
+                <p class="item">Return information of nearby place. Takes in lattitude and longitude. Type in (12,12) for a result
+					
+				</p>
                 <h3 class="item">
 					
 					Lattitude <input type="number" id="latPlace" name="lat" min="-90" max="90" required> <br>
@@ -251,9 +254,9 @@
 		</div>
 		
 
-        <script type="application/javascript" src="js/jquery-2.2.3.min.js"></script>
-		<script type="application/javascript" src="js/Ocean.js"></script>
-		<script type="application/javascript" src="js/Weather.js"></script>
-		<script type="application/javascript" src="js/Place.js"></script>
+        <script type="application/javascript" src="./js/jquery-2.2.3.min.js"></script>
+		<script type="application/javascript" src="./js/Ocean.js"></script>
+		<script type="application/javascript" src="./js/Weather.js"></script>
+		<script type="application/javascript" src="./js/Place.js"></script>
     </body>
 </html>

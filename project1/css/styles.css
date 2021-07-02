@@ -1,0 +1,86 @@
+html{
+    background-color: black;
+}
+
+h2 {
+
+}
+
+nav {
+    width: 95%;
+    background-color: blue;
+    color: red;
+}
+
+.headerText{
+    text-align: center;
+    background-color: blue;
+}
+.center{
+    margin: auto;
+}
+
+.hContainer {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.vContainer {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+.item {
+    display: flex;
+    flex-basis: 1 1 0;
+}
+
+.main {
+    border: white 1px dashed;
+    width: 95%;
+    height: 94vh;
+}
+
+.map {
+    background-color: coral;
+    flex-grow: 1;
+}
+
+.details {
+    background-color: cornflowerblue;
+    flex-wrap: 1;
+}
+.optionsMenu {
+    background-color: cornsilk;
+}
+
+.stats {
+    background-color: crimson;
+}
+
+@media only screen and (max-width: 1750px) {
+    .hContainer {
+        display: block;
+        height: auto;
+    }
+
+    .vContainer {
+        display: block;
+    }
+
+    .map{
+        width: 100%;
+        height: ;
+    }
+
+    .map:before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+    }
+  }

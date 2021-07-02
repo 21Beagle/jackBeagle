@@ -1,28 +1,33 @@
 	$('#btnRunOcean').click(function() {
-		console.log("button clicked", $('#lat').val(), $('#lng').val())
+		console.log("Ocean button clicked", $('#latOcean').val(), $('#lngOcean').val())
 		$.ajax({
-			url: "php/place.php",
+			url: "php/oceans.php",
 			type: 'POST',
 			dataType: 'json',
 			data: {
-				lat: $('#latWeather').val(),
-				lng: $('#lngWeather').val()
+				lat: $('#latOcean').val(),
+				lng: $('#lngOcean').val()
 			},
 			
 			success: function(result) {
 				console.log(JSON.stringify(result));
-				console.log(result['data']['name'])
-
+				console.log(result.data)
+				data = result.data 
+				console.log(data)
 				if (result.status.name == "ok") {
 					$('#txtLatOcean').html($('#latOcean').val())
 					$('#txtLngOcean').html($('#lngOcean').val())
-					$('#txtOcean').html(result['data']['name']);
-					console.log(result['data']['name'])
+					$('#txtOcean').html(data['name']);
+					console.log(data['name'])
 
 				}
 			
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(jqXHR)
+				console.log(textStatus)
+
+				console.log(errorThrown)
 				$('#txtOcean').html('There is no sea or ocean at this spot');
 				$('#txtLatOcean').html($('#latOcean').val())
 				$('#txtLngOcean').html($('#lngOcean').val())

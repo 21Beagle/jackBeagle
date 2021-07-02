@@ -1,0 +1,18 @@
+{
+  "name": "project1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "testJs": "nodemon js/script.js",
+    "startWeb": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "internal": "^2.0.27",
+    "nodemon": "^2.0.9",
+    "preload": "^0.1.0"
+  }
+}
