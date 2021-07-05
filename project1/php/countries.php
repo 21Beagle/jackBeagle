@@ -7,7 +7,7 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='api.geonames.org/findNearbyPlaceNameJSON?lat=' . $_REQUEST['lat'] . '&lng=' . $_REQUEST['lng'] . '&radius=300&username=flightltd';
+	$url='localhost/project1/js/countryBorders.geo.json';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -24,7 +24,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-	$output['data'] = $decode['geonames'];
+	$output['data'] = $decode['"features"'];
 	
 	header('Content-Type: application/json; charset=UTF-8');
 

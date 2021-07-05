@@ -7,8 +7,13 @@
         <meta name="description" content="">
         <meta name="viewport" content=" width=device-width, initial-scale=1">
 
+        
         <link href="favicon.ico" rel="icon">
+
+
+
         <link href="./css/styles.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     </head>
     <body>
         <nav class="center">
@@ -23,13 +28,18 @@
                 <div class="optionsMenu item">
                     <h2 class="center"> Choose if this was really long what would it look like?</h2>
                 </div>
-                <div class="stats item">
+                <div class=" stats item">
                     <h2 class="center"> Stats</h2>
                 </div>
             </div>
-            <div class="item map">
-
+            <div class="map" >
+                <div id="mapid">
+                    
+                </div>
             </div>
         </div>
+        <script type="application/javascript" src="./js/jquery-2.2.3.min.js"></script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="js/script.js"></script>
     </body>
 </html>

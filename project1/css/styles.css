@@ -2,10 +2,6 @@ html{
     background-color: black;
 }
 
-h2 {
-
-}
-
 nav {
     width: 95%;
     background-color: blue;
@@ -43,11 +39,10 @@ nav {
 .main {
     border: white 1px dashed;
     width: 95%;
-    height: 94vh;
+    height: 90vh;
 }
 
 .map {
-    background-color: coral;
     flex-grow: 1;
 }
 
@@ -63,7 +58,11 @@ nav {
     background-color: crimson;
 }
 
-@media only screen and (max-width: 1750px) {
+#mapid {
+    height: 100%;
+}
+
+@media only screen and (max-width: 1350px) {
     .hContainer {
         display: block;
         height: auto;
@@ -75,12 +74,15 @@ nav {
 
     .map{
         width: 100%;
-        height: ;
     }
+
+    #mapid {
+        height: 78vh;
+    }
+    
 
     .map:before {
         content: "";
         display: block;
-        padding-top: 100%;
     }
   }
