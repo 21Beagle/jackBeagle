@@ -1,20 +1,4 @@
-var countryFilePath = "./js/countryBorders.geo.json"
-
-
-getCountryData = async () => {
-    data = await $.getJSON(countryFilePath)
-    return data
-}
-
-
-
-
-
-
-
-
-var myMap = L.map('mapid').setView([51.505, -0.09], 13);
-
+var myMap = L.map('mapid').locate({setView: true, maxZoom: 10});
 
 var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
 	maxZoom: 20,
@@ -22,95 +6,99 @@ var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/a
 }).addTo(myMap);
 
 
-const thisCountryData = (countryNumber, data) => {
-    return countryData = data.features[countryNumber]
+(async () => {
+var countryFilePath = "./js/countryBorders.geo.json"
+// Get the data out of the fetchMember function
+// It is in the scope of the overall self executing function.
+
+let test = await getCountryData();
+
+
+async function getCountryData($vid) {
+
+    let options = {
+    method: 'GET',
+    }
+    let response = await fetch(countryFilePath, options);
+    let $member = await response.text();
+
+    return $member; // this is a promise because it is in an async function
+
+} //end of function
+
+countryJSON = JSON.parse(test)
+
+const countriesData = countryJSON.features
+
+
+const thisCountryData = (countryNumber) => {
+    return countriesData[countryNumber]
 }
 
-const getCountryName = (numberCountry, data) => {
-    return data.features[numberCountry].properties.name
+var feature 
+
+const getCountryNumberByName = (countryName) => {
+    for (i = 0; i< countriesData.length; i++) {
+        var thisCountry = thisCountryData(i)
+        var name = thisCountry.properties.name
+        if (name == countryName) {
+            return i
+        }
+    }
+    throw countryName + " is not a valid country name"
 }
-
-
-
 
 const addCountryToMap = (numberCountry) => {
-    getCountryData().then(data => {
-        L.geoJSON(thisCountryData(numberCountry, data), {
-            style: function (feature) {
-                return {color: "red"};
-            }
-        }).bindPopup(function (layer) {
-            return layer.feature.properties.name;
-        }).addTo(myMap);
-    });
+    var feature = createLeafletObject(numberCountry)
+    feature.addTo(myMap)
 }
 
 
 
-const addBorderAndCenter = (numberCountry) => {
-    centerCountryOnMap(numberCountry)
-    addCountryToMap(numberCountry)
+const createLeafletObject = (numberCountry) => {
+    thisCountry = thisCountryData(numberCountry)
+    return L.geoJSON(thisCountry).on('click', function() { 
+        alert('Clicked on a member of the group!'); 
+        L.removeLayer(thisCountry)
+    })
+}
+
+const getCountryBounds = (numberCountry) => {
+    var thisCountry = thisCountryData(numberCountry)
+    var feature = L.geoJson(thisCountry)
+    var bounds = feature.getBounds();
+    console.log(bounds)
+    return bounds
 }
 
 const centerCountryOnMap = (numberCountry) => {
-    getCountryData().then(data => {
-
-        polyType = data.features[numberCountry].geometry.type
-
-        if (polyType == "MultiPolygon"){
-            console.log("multi")
-            coordinates = data.features[numberCountry].geometry.coordinates
-            //loop through all arrays, to get all the x and y coordinates. From there we can find the minimum and the maximum of x and y and then find the mid point
-
-            let xPoints = []
-            let yPoints = []
-            for (array = 0; array < coordinates.length; array++) {
-                border = coordinates[array]
-                for (i = 0; i < border.length; i++) {
-                    setOfPoints = border[i]
-                    for (j = 0; j < setOfPoints.length; j++) {
-                        point = setOfPoints[j]
-                        xPoints.push(point[1])
-                        yPoints.push(point[0])
-                    }
-                }
-            }
-            xMin = Math.min.apply(null, xPoints)
-            xMax = Math.max.apply(null, xPoints)
-            xMid = xMin + (xMax - xMin)/2
-            
-            yMax = Math.max.apply(null, yPoints)
-            yMin = Math.min.apply(null, yPoints)
-            yMid = yMin + (yMax - yMin)/2
-            
-            bounds = [[xMin, yMin], [xMax, yMax]]
-        } else {
-            coordinates = data.features[numberCountry].geometry.coordinates
-            //loop through all arrays, to get all the x and y coordinates. From there we can find the minimum and the maximum of x and y and then find the mid point
-            console.log("single")
-            let xPoints = []
-            let yPoints = []
-
-            console.log("here")
-            setOfPoints = coordinates[0]
-            console.log(coordinates.length)
-            for (j = 0; j < setOfPoints.length; j++) {
-                    point = setOfPoints[j]
-                    xPoints.push(point[1])
-                    yPoints.push(point[0])
-            }
-
-            xMin = Math.min.apply(null, xPoints)
-            xMax = Math.max.apply(null, xPoints)
-            xMid = xMin + (xMax - xMin)/2
-            
-            yMax = Math.max.apply(null, yPoints)
-            yMin = Math.min.apply(null, yPoints)
-            yMid = yMin + (yMax - yMin)/2
-            
-            bounds = [[xMin, yMin], [xMax, yMax]]
-        }
-        console.log(bounds)
-        myMap.flyToBounds(bounds)
-    });
+    var bounds = getCountryBounds(numberCountry)
+    myMap.flyToBounds(bounds)
 }
+
+var number = getCountryNumberByName("Canada")
+
+centerCountryOnMap(number)
+addCountryToMap(number)
+
+console.log(L.featureGroup())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+})();
+
