@@ -1,104 +1,114 @@
-var myMap = L.map('mapid').locate({setView: true, maxZoom: 10});
+// define our map and file path for geoson data
 
+const myMap = L.map("mapid").locate({setView: true, maxZoom: 10});
+const countryFilePath = "./js/countryBorders.geo.json"
+
+// Get the map data for leaflet
 var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
 	maxZoom: 20,
 	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 }).addTo(myMap);
 
+// this appends the datalist with all the country names
+getAllCountries().then((features)=> {
+    namesArr = []
+    for (i = 0; i < features.length; i++) {
+        namesArr.push(features[i].properties.name)
+    }
+    return namesArr
+}).then(namesArr => {
+    var container = document.getElementById('countryDatalist'),
+    i = 0,
+    len = namesArr.length,
+    dl = document.createElement('datalist');
+    dl.id = 'countries';
 
-(async () => {
-var countryFilePath = "./js/countryBorders.geo.json"
-// Get the data out of the fetchMember function
-// It is in the scope of the overall self executing function.
+    for (; i < len; i += 1) {
+        var option = document.createElement('option');
+        option.value = namesArr[i];
+        option.text = namesArr[i]
+        dl.appendChild(option);
+    }
 
-let test = await getCountryData();
+    container.appendChild(dl);
+})
 
 
-async function getCountryData($vid) {
+// gets the data of all the countries
+async function getAllCountries() {
 
     let options = {
     method: 'GET',
     }
     let response = await fetch(countryFilePath, options);
     let $member = await response.text();
+    countryJSON = JSON.parse($member)
+    return countryJSON.features; 
 
-    return $member; // this is a promise because it is in an async function
-
-} //end of function
-
-countryJSON = JSON.parse(test)
-
-const countriesData = countryJSON.features
-
-
-const thisCountryData = (countryNumber) => {
-    return countriesData[countryNumber]
 }
 
-var feature 
 
-const getCountryNumberByName = (countryName) => {
-    for (i = 0; i< countriesData.length; i++) {
-        var thisCountry = thisCountryData(i)
-        var name = thisCountry.properties.name
-        if (name == countryName) {
-            return i
-        }
+// gets a specific country's data
+async function getCountryData(number) {
+
+    let options = {
+    method: 'GET',
     }
-    throw countryName + " is not a valid country name"
+    let response = await fetch(countryFilePath, options);
+    let $member = await response.text();
+    countryJSON = JSON.parse($member)
+    return countryJSON.features[number]; 
+
 }
 
-const addCountryToMap = (numberCountry) => {
-    var feature = createLeafletObject(numberCountry)
-    feature.addTo(myMap)
-}
 
-
-
-const createLeafletObject = (numberCountry) => {
-    thisCountry = thisCountryData(numberCountry)
-    return L.geoJSON(thisCountry).on('click', function() { 
-        alert('Clicked on a member of the group!'); 
-        L.removeLayer(thisCountry)
+// Function's list to do leaflet stuff
+const getCountryNumberByName = (countryName) => {
+    getAllCountries().then(countriesData => {
+        for (i = 0; i< countriesData.length; i++) {
+            var name = countriesData[i].properties.name
+            if (name == countryName) {
+                return i
+            }
+        }
+        throw countryName + " is not a valid country name"
+    }).then(result => {
+        return result
     })
 }
 
-const getCountryBounds = (numberCountry) => {
-    var thisCountry = thisCountryData(numberCountry)
-    var feature = L.geoJson(thisCountry)
-    var bounds = feature.getBounds();
-    console.log(bounds)
-    return bounds
-}
-
-const centerCountryOnMap = (numberCountry) => {
-    var bounds = getCountryBounds(numberCountry)
-    myMap.flyToBounds(bounds)
-}
-
-var number = getCountryNumberByName("Canada")
-
-centerCountryOnMap(number)
-addCountryToMap(number)
-
-console.log(L.featureGroup())
+// when the button is clicked the map will fly to the country and create a boundary for it
+$('#btnGoCountry').click(function() {
+    console.log("button clicked");
+    myMap.eachLayer(function (layer) {
+        if (layer != Stadia_AlidadeSmoothDark)
+        myMap.removeLayer(layer);
+    });
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-})();
-
+    // get country number, we do this to avoid the user from having to type in a number to find the country,
+    // its slightly awkward but we get the result we want
+    getAllCountries().then(countriesData => {
+        countryName = $('#countryDatalist').val();
+        for (i = 0; i< countriesData.length; i++) {
+            var name = countriesData[i].properties.name
+            if (name == countryName) {
+                return i
+            }
+        }
+        throw countryName + " is not a valid country name"
+    }).then(countryNumber => {
+            
+        getCountryData(countryNumber).then(data => {
+            console.log(data)
+            return data
+            
+        }).then(data=> {
+            var feature = L.geoJson(data)
+            var bounds = feature.getBounds();
+            feature.addTo(myMap)
+            myMap.flyToBounds(bounds)
+        })
+    })
+});

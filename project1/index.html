@@ -26,16 +26,20 @@
         <div class="hContainer center main">
             <div class="vContainer details item">
                 <div class="optionsMenu item">
-                    <h2 class="center"> Choose if this was really long what would it look like?</h2>
+                    <h2 class="center"> Choose:</h2>
+                    <div>
+                        <form id="country" onsubmit="return false">
+                            <input id="countryDatalist"  list="countries">
+                            <button type="submit" id="btnGoCountry">Go!</button>
+                        </form>
+                    </div>
                 </div>
                 <div class=" stats item">
                     <h2 class="center"> Stats</h2>
                 </div>
             </div>
             <div class="map" >
-                <div id="mapid">
-                    
-                </div>
+                <div id="mapid"></div>
             </div>
         </div>
         <script type="application/javascript" src="./js/jquery-2.2.3.min.js"></script>
