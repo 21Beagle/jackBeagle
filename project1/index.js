@@ -55,7 +55,7 @@ const addCountryToMap = (numberCountry) => {
 
 
 const createLeafletObject = (numberCountry) => {
-    thisCountry = countryData(numberCountry)
+    
     return L.geoJSON(thisCountry).on('click', function() { 
         alert('Clicked on a member of the group!'); 
         L.removeLayer(thisCountry)

@@ -79,8 +79,11 @@ nav {
     #mapid {
         height: 78vh;
     }
-    
 
+    .stats {
+        background-color: crimson;
+    }
+    
     .map:before {
         content: "";
         display: block;
