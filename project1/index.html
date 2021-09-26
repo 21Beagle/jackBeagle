@@ -26,16 +26,42 @@
         <div class="hContainer center main">
             <div class="vContainer details item">
                 <div class="optionsMenu item">
-                    <h2 class="center"> Choose:</h2>
-                    <div>
-                        <form id="country" onsubmit="return false">
-                            <input id="countryDatalist"  list="countries">
+                    <div class="countryForm center">
+                        <form class="countryForm center" id="country" onsubmit="return false">
+                            <input class="countryForm center" id="countryDatalist"  list="countries">
                             <button type="submit" id="btnGoCountry">Go!</button>
                         </form>
                     </div>
                 </div>
-                <div class=" stats item">
-                    <h2 class="center"> Stats</h2>
+                <div class="vContainer stats item">
+
+                    <div class="item hContainer">
+                        <h2 class="center item">Information</h2>
+                    </div>
+
+                    <div class="item hContainer">
+                         <h3 class="item" id="countryName"></h3><h3 class="item">Country Name</h3>
+                    </div>
+
+                    <div class="item hContainer">
+                        <h3 class="item" id="continent"></h3><h3 class="item">Continent</h3>
+                    </div>
+
+                    <div class="item hContainer">
+                        <h3 class="item" id="capital"></h3><h3 class="item">Capital</h3>
+                    </div>
+
+                    <div class="item hContainer">
+                        <h3 class="item" id="currency"></h3><h3 class="item">Currency</h3>
+                    </div>
+
+                    <div class="item hContainer">
+                        <h3 class="item" id="population"></h3><h3 class="item">Population</h3>
+                    </div>
+
+                    <div class="item hContainer">
+                        <h3 class="item" id="area"></h3><h3 class="item">Area Km<sup>2</sup></h3>
+                    </div>
                 </div>
             </div>
             <div class="map" >

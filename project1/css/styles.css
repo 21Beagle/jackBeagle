@@ -24,6 +24,20 @@ nav {
     align-items: stretch;
 }
 
+.h2 {
+    padding: 0%;
+    margin-top: 0%;
+    margin-bottom: 0%;
+    
+}
+
+.h3 {
+    padding: 0%;
+    margin-top: 0%;
+    margin-bottom: 0%;
+    
+}
+
 .vContainer {
     display: flex;
     flex-direction: column;
@@ -37,7 +51,6 @@ nav {
 }
 
 .main {
-    border: white 1px dashed;
     width: 95%;
     height: 90vh;
 }
@@ -49,14 +62,18 @@ nav {
 .details {
     background-color: cornflowerblue;
     flex-wrap: 1;
+    width: 30%;
 }
+
 .optionsMenu {
     background-color: cornsilk;
 }
 
 .stats {
     background-color: crimson;
+    height: 100%;
 }
+
 
 #mapid {
     height: 100%;
@@ -70,6 +87,10 @@ nav {
 
     .vContainer {
         display: block;
+    }
+
+    .details {
+        width: 100%;
     }
 
     .map{
