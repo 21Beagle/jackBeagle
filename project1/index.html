@@ -7,65 +7,30 @@
         <meta name="description" content="">
         <meta name="viewport" content=" width=device-width, initial-scale=1">
 
-        
         <link href="favicon.ico" rel="icon">
-
-
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Quattrocento+Sans&display=swap" rel="stylesheet">
 
         <link href="./css/styles.css" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     </head>
     <body>
         <nav class="center">
-            <h2 class="headerText">home</h2>
+            <h2 class="headerText">HOME</h2>
         </nav>
-        
-        <nav>
-
-        </nav>
-        <div class="hContainer center main">
-            <div class="vContainer details item">
-                <div class="optionsMenu item">
-                    <div class="countryForm center">
-                        <form class="countryForm center" id="country" onsubmit="return false">
-                            <input class="countryForm center" id="countryDatalist"  list="countries">
-                            <button type="submit" id="btnGoCountry">Go!</button>
-                        </form>
-                    </div>
-                </div>
-                <div class="vContainer stats item">
-
-                    <div class="item hContainer">
-                        <h2 class="center item">Information</h2>
-                    </div>
-
-                    <div class="item hContainer">
-                         <h3 class="item" id="countryName"></h3><h3 class="item">Country Name</h3>
-                    </div>
-
-                    <div class="item hContainer">
-                        <h3 class="item" id="continent"></h3><h3 class="item">Continent</h3>
-                    </div>
-
-                    <div class="item hContainer">
-                        <h3 class="item" id="capital"></h3><h3 class="item">Capital</h3>
-                    </div>
-
-                    <div class="item hContainer">
-                        <h3 class="item" id="currency"></h3><h3 class="item">Currency</h3>
-                    </div>
-
-                    <div class="item hContainer">
-                        <h3 class="item" id="population"></h3><h3 class="item">Population</h3>
-                    </div>
-
-                    <div class="item hContainer">
-                        <h3 class="item" id="area"></h3><h3 class="item">Area Km<sup>2</sup></h3>
-                    </div>
-                </div>
+        <div class="vContainer center">
+            <div class="countryForm hContainer center" id="country">
+                <input class="countryInput" id="countryDatalist"  list="countries" placeholder="Choose a country">
+                <button class="countryButton" type="submit" id="btnGoCountry">Go!</button>
             </div>
-            <div class="map" >
-                <div id="mapid"></div>
+            <br>
+
+            <div class="hContainer center main">
+                <div class="map" >
+                    <div id="mapid"></div>
+                </div>
             </div>
         </div>
         <script type="application/javascript" src="./js/jquery-2.2.3.min.js"></script>
