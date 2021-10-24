@@ -4,7 +4,7 @@ const myMap = L.map("mapid").locate({setView: true, maxZoom: 10});
 const countryFilePath = "./js/countryBorders.geo.json"
 
 // Get the map data for leaflet
-var Stadia_AlidadeSmoothDark =  L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+var Stadia_AlidadeSmoothDark =  L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=9aa856cb-cf4e-4ac9-9897-2aaf84db272c', {
 	maxZoom: 20,
 	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 }).addTo(myMap);
@@ -433,7 +433,7 @@ const windDirectionIcon = (windSpeed, windDirection) => {
             colour = "#b3edff"
             break
         case (windSpeed <= 30):
-            colour = "#43c464"
+            colour = "#81c993"
             break
         default:
             colour = "white"
