@@ -155,6 +155,8 @@ const getWeather = (bounds) => {
                 var data = result.data
                 var len = data.length
 
+
+                //using a feature group we can show the icons at certain zoom levels.
                 var windMarkers = new L.FeatureGroup()
                 var tempMarkers = new L.FeatureGroup()
 
@@ -224,6 +226,8 @@ const getWeather = (bounds) => {
 
 };
 
+
+// gets all the information for each country from the country code in the geojson data
 const getInformation = (countryCode, feature) => {
     $.ajax({
         url: "php/information.php",
@@ -268,6 +272,8 @@ const getInformation = (countryCode, feature) => {
     }); 
 
 };
+
+// gets the position of the iss to display on the map
 
 const getISS = () => $.ajax({
     url: "php/iss.php",
@@ -344,6 +350,8 @@ const issIcon = L.divIcon({
     iconSize: [10, 10],
     iconAnchor : [30, 30]
 })
+
+// the non-static icons, we use a function to populate the html values and change the colours
 
 const popIcon = (countryName, continentName, population, capital, currencyCode, areaInSqKm) => {
     var populationIcon = L.divIcon({
@@ -426,7 +434,8 @@ const windDirectionIcon = (windSpeed, windDirection) => {
         case (windSpeed <= 0):
             colour = "#d6d6d6"
             break
-        case (windSpeed <= 10):
+        case (windSpeed <= 10
+            ):
             colour = "#95c7a2"
             break
         case (windSpeed <= 20):
