@@ -4,6 +4,7 @@
     --mid: #BEB7A4;
     --accentLight: #99D8FF;
     --accentDark: #12547D;
+    --accent2: #fe4902;
 }
 
 
@@ -13,10 +14,34 @@ html{
 
 nav {
     width: 95%;
-    font-family: 'Quattrocento Sans', sans-serif;
+    color: var(--veryLight); 
+    font: bold 20px Helvetica, Arial, Sans-Serif;
+    text-shadow: 1px 1px var(--accent2), 
+                 2px 2px var(--accent2), 
+                 3px 3px var(--accent2),
+                 -1px -1px var(--bg);
     background-color: var(--accentDark);
-    color: var(--veryLight);
+
 }
+
+a:link {
+    color: var(--veryLight);
+  }
+  
+  /* visited link */
+  a:visited {
+    color: var(--mid);
+  }
+  
+  /* mouse over link */
+  a:hover {
+    color: var(--accent2);
+  }
+  
+  /* selected link */
+  a:active {
+    color: var(--mid);
+  }
 
 
 .countryForm {
@@ -54,7 +79,39 @@ nav {
     width: 10%;
 }
 
+.mapInfo {
+    color: var(--accent2);
+    display: block;
+    font: 15px 'Quattrocento Sans', sans-serif;
+    text-shadow: 1px 1px var(--veryLight),
+                -1px -1px var(--bg);
+    white-space: nowrap;
+}
 
+.countryName {
+    color: var(--veryLight); 
+    font: bold 52px 'Quattrocento Sans', sans-serif;
+    text-shadow: 1px 1px var(--accent2), 
+                 2px 2px var(--accent2), 
+                 3px 3px var(--accent2),
+                 -1px -1px var(--bg);
+    white-space: nowrap;
+}
+
+.temperature {
+    font: bold 22px 'Quattrocento Sans', sans-serif;
+    text-shadow: 1px 1px var(--veryLight),
+    -1px -1px var(--bg);
+    white-space: nowrap;
+}
+
+.windIcon {
+    font: bold 22px 'Quattrocento Sans', sans-serif;
+    text-shadow: 1px 1px var(--veryLight),
+    -1px -1px var(--bg);
+    white-space: nowrap;
+    display: inline-block;
+}
 
 .headerText{
     text-align: center;
@@ -101,7 +158,7 @@ nav {
 
 .main {
     width: 100%;
-    height: 88vh;
+    height: 82vh;
 }
 
 .map {
@@ -122,9 +179,11 @@ nav {
 
 #mapid {
     height: 100%;
+    background-color: #c1c9cd;
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: var(--accentLight);
     opacity: 1; /* Firefox */
   }
+
