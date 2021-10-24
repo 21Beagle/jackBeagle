@@ -403,10 +403,10 @@ const windSpeedIcon = (windSpeed) => {
             colour = "#95c7a2"
             break
         case (windSpeed <= 20):
-            colour = "#b3edff"
+            colour = "#45aa60"
             break
         case (windSpeed <= 30):
-            colour = "#43c464"
+            colour = "#1e863a"
             break
         default:
             colour = "white"
@@ -426,14 +426,14 @@ const windDirectionIcon = (windSpeed, windDirection) => {
         case (windSpeed <= 0):
             colour = "#d6d6d6"
             break
-        case (windSpeed <= 1):
+        case (windSpeed <= 10):
             colour = "#95c7a2"
             break
         case (windSpeed <= 20):
-            colour = "#b3edff"
+            colour = "#45aa60"
             break
         case (windSpeed <= 30):
-            colour = "#81c993"
+            colour = "#1e863a"
             break
         default:
             colour = "white"
