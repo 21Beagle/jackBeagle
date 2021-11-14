@@ -582,7 +582,7 @@ const getCities = (Country) => {
             return Country
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            alert(`Could not get city data for ${Country.name}`)
+            alert(`No cities in geonames data base for ${Country.name}`)
             console.log(jqXHR)
             console.log(textStatus)
             console.log(errorThrown)
