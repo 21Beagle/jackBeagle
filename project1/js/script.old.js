@@ -311,7 +311,10 @@ $(document).ready(function() {
 
 
 // showers, light rain, clouds, snow, clear, overcast
+// We decide what icon to use using the weather forecast grab
+const weatherMarkerCreate = () => {
 
+}
 
 
 const cloudsIcon = L.divIcon({

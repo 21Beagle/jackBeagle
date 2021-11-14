@@ -7,7 +7,7 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='api.openweathermap.org/data/2.5/weather?lat=' . $_REQUEST['lat'] . '&lon=' . $_REQUEST['lng'] . '&appid=d8f5765ebc28ccc49475784b4f71626d';
+	$url='http://api.geonames.org/citiesJSON?north=' . $_REQUEST['north'] . '&south='. $_REQUEST['south'] . '&east='. $_REQUEST['east'] . '&west='. $_REQUEST['west'] . '&maxRows=25&username=21beagle';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -24,7 +24,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-	$output['data'] = $decode;
+	$output['data'] = $decode['geonames'];
 	
 	header('Content-Type: application/json; charset=UTF-8');
 
