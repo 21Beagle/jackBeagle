@@ -261,6 +261,7 @@ th.infoTable {
 #cityTable {
     display: none;
     pointer-events: all;
+    height: 150px;
 }
 /* country flag */
 
