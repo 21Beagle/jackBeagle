@@ -30,6 +30,102 @@
         <div class="inputWrapper">
             <select class="countryInput" id="countrySelect" list="countries" placeholder="Choose a country" onchange=""></select>
         </div>
+        <div class='clearButton' id='clearButton'>
+            <button class="clearButton"  id="clearButtonStyle">
+                <div id='clearButtonInner' class='clearButton'>
+                    &times;
+                </div>
+            </button>
+
+        </div>
+        <img class='countryFlag', id='countryFlag'
+        src="https://flagcdn.com/84x63/za.png"
+        srcset="https://flagcdn.com/168x126/za.png 2x, https://flagcdn.com/252x189/za.png 3x"
+        width="84"
+        height="63"
+        alt="South Africa">
+
+        <div class=viewPortContainer>
+            <div class="buttonsWidth"></div>
+            <div class="awayFromButtons">
+                <table class="table table table-dark" id="informationTable">
+                    <thead>
+                        <tr>
+                            <th colspan="2"  class="infoTable" id='infoHeader'>United Kingdom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class='firstCol'>Continent</td>
+                            <td id="countryContinent">Europe</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Capital</td>
+                            <td id="countryCapital">London</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Population</td>
+                            <td id="countryPopulation" class="tableNumber">90,000,000</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Currency</td>
+                            <td id="countryCurrency">GBP</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Area</td>
+                            <td id="countryArea" class="tableNumber">156321</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table table-dark" id="timeTable">
+                    <thead>
+                        <tr>
+                            <th colspan="2"  class="infoTable" id='timeHeader'>United Kingdom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class='firstCol'>Current Time</td>
+                            <td id="currentTime">Europe</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Sunrise</td>
+                            <td id="sunrise">Sunset</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Sunset</td>
+                            <td id="sunset">90,000,000</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Timezone</td>
+                            <td id="timezone">GBP</td>
+                        </tr>
+                        <tr>
+                            <td class='firstCol'>Timezone Name</td>
+                            <td id="timezoneName">GBP</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table table-dark" id="cityTable">
+                    <thead>
+                        <tr>
+                            <th colspan="2"  class="infoTable" id='cityHeader'>London</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class='firstCol'>Population</td>
+                            <td id="cityPopulation">Europe</td>
+                        </tr>
+                        <tr>
+                            <td colspan='2' ><a href='' id='cityWiki'>Wikipedia</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class='rightMargin'></div>
+        </div>
+        
         <div class="bottom">
             <h4 id="forecastTime">Now</h4>
             <div class="inputWrapper">

@@ -11,7 +11,7 @@ var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/a
 
 
 
-// ┌──────────────────────────────────────────────────────────────────────────────┐
+// ┌─────────────────────────────── ───────────────────────────────────────────────┐
 // │ The various types of global variables                                        │
 // └──────────────────────────────────────────────────────────────────────────────┘
 
@@ -21,9 +21,19 @@ var prevCountry
 // country boarders are always on the map if available 
 var countryBorders = new L.FeatureGroup().addTo(myMap)
 
-// the slider
+// the slider and buttons
 var slider = document.getElementById("forecast")
 var forecastTimeShown = document.getElementById('forecastTime')
+
+var informationTable = document.getElementById("informationTable")
+var cityTable = document.getElementById('cityTable')
+var timeTable = document.getElementById("timeTable")
+
+var countryFlag = document.getElementById('countryFlag')
+
+var clearButton = document.getElementById('clearButton')
+
+
 
 // these markers will be on the map depending on a push of an easy button
 var infoMarkers = new L.FeatureGroup()
@@ -44,6 +54,7 @@ var weatherCurrent
 // It is used to update all the information of a country inside the easy button functions
 
 const updateCountry = () => currentCountry
+const updateTable = () => informationTable
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
 // │ Easy Buttons                                                                 │
@@ -54,17 +65,25 @@ const showButtons = () => {
     //information easy button
     infoButton = L.easyButton('<span>&#8505;</span>', function () {
         removeMapMarkers()
+        removeTable()
+        informationTable.style.display = 'table'
+        clearButton.style.display = 'inline-block'
         myMap.addLayer(infoMarkers)
     }).addTo(myMap);
 
     //timezone easy button
     timeButton = L.easyButton(`<span>${timeEasyButtonIcon}</span>`, function () {
-        removeMapMarkers()
-        myMap.addLayer(timeMarkers)
+            removeMapMarkers()
+            removeTable()
+            timeTable.style.display = 'table'
+            clearButton.style.display = 'inline-block'
+            
+            myMap.addLayer(infoMarkers)
     }).addTo(myMap);
 
     citiesButton = L.easyButton(`<span>&#9733;</span>`, function () {
         removeMapMarkers()
+        removeTable()
         myMap.addLayer(citiesMarkers)
     }).addTo(myMap)
 
@@ -89,6 +108,7 @@ const showButtons = () => {
             if (newCountry.geoname) {newCountry.children()}
         }
             removeMapMarkers();
+            removeTable()
             myMap.addLayer(forecastMarkersShown)
             //show the slider
             slider.style.display = 'flex'
@@ -103,13 +123,33 @@ const showButtons = () => {
 
 const removeMapMarkers = () => {
     forecastTimeShown.style.display = 'none'
+    informationTable.style.display = 'none'
     slider.style.display = 'none'
+    timeTable.style.display = 'none'
+    clearButton.style.display = 'none'
     myMap.removeLayer(timeMarkers)
     myMap.removeLayer(infoMarkers)
     myMap.removeLayer(citiesMarkers)
     myMap.removeLayer(forecastMarkersShown)
 }
 
+const removeTable = () => {
+    timeTable.style.display = 'none'
+    clearButton.style.display = 'none'
+    informationTable.style.display = 'none'
+    cityTable.style.display = 'none'
+}
+
+document.getElementById('clearButton').addEventListener('click', removeTable)
+
+const updateCountryFlag = (countryCode, countryName) => {
+    countryCode = countryCode.toLowerCase()
+    src = `https://flagcdn.com/84x63/${countryCode}.png`
+    srcset = `https://flagcdn.com/168x126/${countryCode}.png 2x, https://flagcdn.com/252x189/${countryCode}.png 3x`
+    countryFlag.setAttribute('src', src)
+    countryFlag.setAttribute('srcset', srcset)
+    countryFlag.setAttribute('alt', countryName)
+}
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
 // │ Grabs the data for all the countries                                         │
@@ -125,7 +165,6 @@ async function getAllCountries() {
     countryJSON = JSON.parse($member)
     return countryJSON.features;
 }
-
 
 
 // Grabs the data in the countries data geojson and then calls the Country Class for each
@@ -180,11 +219,13 @@ window.onload = function () {
 
         var index = getCountriesIndex(this.value);
 
-
+        updateCountryFlag(Countries[index].a2, Countries[index].name)
+        countryFlag.style.display = 'inline-block'
 
 
         //remove the current layers from the map
         removeMapMarkers()
+        removeTable()
 
 
         //clear the layers form the feature groups
@@ -327,11 +368,29 @@ const getInformation = (Country) => {
                 //set the data
                 Country.continent = info.continentName
                 Country.population = info.population
-                Country.capital = info.population
+                Country.capital = info.capital
                 Country.currency = info.currencyCode
                 Country.area = info.areaInSqKm
                 Country.continent = info.continentName
                 Country.geoname = info.geonameId
+
+                infoHeader = document.getElementById("infoHeader")
+                infoHeader.innerHTML = info.countryName
+
+                countryContinent = document.getElementById("countryContinent")
+                countryContinent.innerHTML = info.continentName
+                
+                countryCapital = document.getElementById("countryCapital")
+                countryCapital.innerHTML = info.capital
+                
+                countryPopulation = document.getElementById("countryPopulation")
+                countryPopulation.innerHTML = info.population
+                
+                countryCurrency = document.getElementById("countryCurrency")
+                countryCurrency.innerHTML = info.currencyCode
+                
+                countryArea = document.getElementById("countryArea")
+                countryArea.innerHTML = info.areaInSqKm
 
                 var infoMarker = L.marker(latLng, {
                     icon: infoIcon(
@@ -379,28 +438,40 @@ const getTimezone = (Country) => {
 
             if (result.status.name == "ok") {
                 var info = result.data
+                console.log(info)
                 //set the data
                 Country.sunrise = info.sunrise
                 Country.sunset = info.sunset
                 Country.currentTime = info.time
                 Country.timeId = info.timezoneId
                 if (info.gmtOffset > 0) {
-                    Country.gmt = `GMT+${info.gmtOffset}`
+                    var time = `GMT+${info.gmtOffset}`
                 } else if (info.gmtOffset < 0) {
-                    Country.gmt = `GMT${info.gmtOffset}`
+                    var time = `GMT${info.gmtOffset}`
                 } else {
-                    Country.gmt = `GMT+0`
+                    var time = `GMT+0`
                 }
 
-                var timeMarker = L.marker(latLng, {
-                    icon: timeIcon(Country.currentTime, Country.sunrise, Country.sunset, Country.gmt, Country.timeId),
-                    zIndexOffset: 1000,
-                    draggable: true
-                })
+                Country.gmt = time
 
-                timeMarkers.addLayer(timeMarker)
+                var timeHeader = document.getElementById("timeHeader")
+                timeHeader.innerHTML = info.countryName
 
-                return timeMarker
+                var currentTime = document.getElementById("currentTime")
+                currentTime.innerHTML = info.time
+
+                var sunrise = document.getElementById("sunrise")
+                sunrise.innerHTML = info.sunrise
+                
+                var sunset = document.getElementById("sunset")
+                sunset.innerHTML = info.sunset
+                
+                var timezone = document.getElementById("timezone")
+                timezone.innerHTML = time
+                
+                var timezoneName = document.getElementById("timezoneName")
+                timezoneName.innerHTML = info.timezoneId
+                
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -498,7 +569,6 @@ const getChildren = (Country) => {
                     JSON.stringify(result)
 
                     var info = result.data
-                    console.log(info)
                     for (i = 0; i < 40; i++) {
                         var latLng = [info.city.coord.lat, info.city.coord.lon]
                         var weather = info.list[i].weather[0].main
@@ -564,17 +634,57 @@ const getCities = (Country) => {
                 var info = result.data
                 Country.cities = info
                 var len = info.length
-                
+                console.log(info)
                 for (i=0;i<len;i++) {
-                    console.log(info[i])
-                    console.log(info[i].name, Country.a2, info[i].countrycode, info[i].fcodeName )
-                    if (info[i].countrycode != Country.a2) {continue;}
+                    var name = info[i].name
+                    var pop = info[i].population
+                    var wiki = info[i].wikipedia
+                    
+                    if (info[i].countrycode != Country.a2) {continue;} // ignore data not in this.country.
                     var latLng = [info[i].lat, info[i].lng]
 
                     if (info[i].fcodeName == 'capital of a political entity') {
-                        citiesMarkers.addLayer(L.marker(latLng, {icon: capitalIcon}))
+
+
+                        var capital = L.marker(latLng, {icon: capitalIcon})
+                        console.log(name,pop,wiki)
+                        capital.name = info[i].name
+                        capital.pop = info[i].population
+                        capital.wiki = info[i].wikipedia
+                        capital.on('click', function(markerOptions) {
+                            console.log(markerOptions)
+                            console.log(markerOptions.sourceTarget)
+                            var name = markerOptions.sourceTarget.name
+                            var population = markerOptions.sourceTarget.pop
+                            var wiki = markerOptions.sourceTarget.wiki
+
+                            cityTableGenerator(name, population, wiki)
+                            })
+
+                        citiesMarkers.addLayer(capital)
+
+
                     } else {
-                        citiesMarkers.addLayer(L.marker(latLng, {icon: cityIcon}))
+                        console.log(name,pop,wiki)
+
+                        var city = new L.marker(latLng, {icon: cityIcon})
+                        city.name = info[i].name
+                        city.pop = info[i].population
+                        city.wiki = info[i].wikipedia
+                        city.on('click', function(markerOptions) {
+                            console.log(markerOptions)
+                            console.log(markerOptions.sourceTarget)
+                            var name = markerOptions.sourceTarget.name
+                            var population = markerOptions.sourceTarget.pop
+                            var wiki = markerOptions.sourceTarget.wiki
+
+                            cityTableGenerator(name, population, wiki)
+                            })
+                        
+
+                        citiesMarkers.addLayer(city)
+
+
                     }
 
                 }
@@ -590,7 +700,21 @@ const getCities = (Country) => {
     })
 } 
 
+const cityTableGenerator = (cityName, cityPopulation, cityWiki) => {
 
+
+    clearButton.style.display = 'inline-block'
+    var cityTable = document.getElementById('cityTable')
+    cityTable.style.display = 'table'
+
+    var cityNameElement = document.getElementById('cityHeader')
+    cityNameElement.innerHTML = cityName
+    var cityPopElement = document.getElementById('cityPopulation')
+    cityPopElement.innerHTML = cityPopulation
+    cityWiki = 'https://' + cityWiki
+    var cityWikiElement = document.getElementById('cityWiki')
+    cityWikiElement.setAttribute('href', cityWiki) 
+}
 
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -600,36 +724,7 @@ const getCities = (Country) => {
 // the information icon
 const infoIcon = (countryName, continentName, population, capital, currencyCode, areaInSqKm) => {
     var populationIcon = L.divIcon({
-        html: `<table>
-            <thead>
-                <tr>
-                    <th>Country</th>
-                    <th>${countryName}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Continent</td>
-                    <td>${continentName}</td>
-                </tr>
-                <tr>
-                    <td>Capital</td>
-                    <td>${capital}</td>
-                </tr>
-                <tr>
-                    <td>Population</td>
-                    <td>${population}</td>
-                </tr>
-                <tr>
-                    <td>Currency</td>
-                    <td>${currencyCode}</td>
-                </tr>
-                <tr>
-                    <td>Area</td>
-                    <td>${areaInSqKm}</td>
-                </tr>
-            </tbody>
-        </table>`,
+        html: ``,
         className: "table table-dark table-hover",
         iconSize: [50, 40],
         iconAnchor: [25, 10]
@@ -638,41 +733,6 @@ const infoIcon = (countryName, continentName, population, capital, currencyCode,
 }
 
 
-// timezones
-const timeIcon = (time, sunrise, sunset, timezone, timezoneName) => {
-    var timeIcon = L.divIcon({
-        html: `<table ">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>${time}</th>
-                </tr>
-            </thead>
-                <tbody>
-                    <tr>
-                        <td>Sunrise</td>
-                        <td>${sunrise}</td>
-                    </tr>
-                    <tr>
-                        <td>Sunset</td>
-                        <td>${sunset}</td>
-                    </tr>
-                    <tr>
-                        <td>Timezone</td>
-                        <td>${timezone}</td>
-                    </tr>
-                    <tr>
-                        <td>Timezone Name</td>
-                        <td>${timezoneName}</td>
-                    </tr>
-                </tbody>
-            </table>`,
-        className: "table table-dark table-hover",
-        iconSize: [50, 40],
-        iconAnchor: [25, 10]
-    })
-    return timeIcon
-}
 
 const timeEasyButtonIcon = '<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.cls-1{fill:#141f38;}</style></defs><title>watch-outline</title><path class="cls-1" d="M271.46,272.55a38.42,38.42,0,0,0-21.86-52.76V166.4a12.8,12.8,0,1,0-25.6,0v53.39a38.4,38.4,0,1,0,29.35,70.86l51.2,51.19a12.8,12.8,0,0,0,18.1-18.1ZM236.8,268.8A12.8,12.8,0,1,1,249.6,256,12.81,12.81,0,0,1,236.8,268.8Z"/><path class="cls-1" d="M435.2,204.8H421.89A192.37,192.37,0,0,0,339.2,93.57V44.8A44.8,44.8,0,0,0,294.4,0H179.2a44.8,44.8,0,0,0-44.8,44.8V93.57a192,192,0,0,0,0,324.86V467.2A44.8,44.8,0,0,0,179.2,512H294.4a44.8,44.8,0,0,0,44.8-44.8V418.43A192.37,192.37,0,0,0,421.89,307.2H435.2a32,32,0,0,0,32-32V236.8A32,32,0,0,0,435.2,204.8ZM160,44.8a19.22,19.22,0,0,1,19.2-19.2H294.4a19.22,19.22,0,0,1,19.2,19.2V80A192.41,192.41,0,0,0,160,80ZM313.6,467.2a19.22,19.22,0,0,1-19.2,19.2H179.2A19.22,19.22,0,0,1,160,467.2V432a192.41,192.41,0,0,0,153.6,0Zm40.86-93.54A166.4,166.4,0,1,1,403.2,256,165.31,165.31,0,0,1,354.46,373.66ZM441.6,275.2a6.41,6.41,0,0,1-6.4,6.4h-8.1a193.26,193.26,0,0,0,0-51.2h8.1a6.41,6.41,0,0,1,6.4,6.4Z"/></svg>'
 
@@ -722,14 +782,14 @@ const nightIcon = L.divIcon({
     iconAnchor: [25, 20],
 });
 
-const cityIcon = L.divIcon({
+var cityIcon = L.divIcon({
     html: `<?xml version="1.0" ?><svg height="30px" version="1.1" viewBox="0 0 60 60" width="30px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title/><desc/><defs><linearGradient id="linearGradient-1" x1="14.4540707%" x2="85.5460383%" y1="23.2326121%" y2="95.0131254%"><stop offset="0%" stop-color="#D4E1F4"/><stop offset="17.173%" stop-color="#D4E1F4"/><stop offset="20%" stop-color="#D4E1F4"/><stop offset="20.014%" stop-color="#DAE4F4"/><stop offset="20.069%" stop-color="#EBEBF4"/><stop offset="20.136%" stop-color="#F6F1F4"/><stop offset="20.231%" stop-color="#FDF4F4"/><stop offset="20.495%" stop-color="#FFF5F4"/><stop offset="25.222%" stop-color="#FFF5F4"/><stop offset="26%" stop-color="#FFF5F4"/><stop offset="26%" stop-color="#D4E1F4"/><stop offset="39.739%" stop-color="#D4E1F4"/><stop offset="42%" stop-color="#D4E1F4"/><stop offset="42.014%" stop-color="#DAE4F4"/><stop offset="42.069%" stop-color="#EBEBF4"/><stop offset="42.136%" stop-color="#F6F1F4"/><stop offset="42.231%" stop-color="#FDF4F4"/><stop offset="42.495%" stop-color="#FFF5F4"/><stop offset="48.939%" stop-color="#FFF5F4"/><stop offset="50%" stop-color="#FFF5F4"/><stop offset="50.003%" stop-color="#F9F2F4"/><stop offset="50.014%" stop-color="#E8EBF4"/><stop offset="50.028%" stop-color="#DDE5F4"/><stop offset="50.047%" stop-color="#D6E2F4"/><stop offset="50.1%" stop-color="#D4E1F4"/><stop offset="70.622%" stop-color="#D4E1F4"/><stop offset="74%" stop-color="#D4E1F4"/><stop offset="74.1%" stop-color="#FFF5F4"/><stop offset="83.459%" stop-color="#FFF5F4"/><stop offset="85%" stop-color="#FFF5F4"/><stop offset="85.1%" stop-color="#D4E1F4"/></linearGradient></defs><g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1"><g id="020---Star" transform="translate(0.000000, 1.000000)"><g id="Colour"><path d="M31.7569,1.14435 L39.2006,16.94809 C39.4742047,17.5450605 40.0274966,17.9662669 40.67576,18.07109 L57.32037,20.60534 C58.0728338,20.7512497 58.6840769,21.2991656 58.9110909,22.0312558 C59.1381048,22.7633461 58.9440977,23.560962 58.4062,24.107 L46.36205,36.40845 C45.8969861,36.8906851 45.6879532,37.5647752 45.79858,38.22553 L48.64182,55.59553 C48.7969313,56.3422303 48.5093863,57.1116407 47.9025754,57.5735945 C47.2957646,58.0355484 46.4775729,58.1079148 45.7991,57.75964 L30.9117,49.55864 C30.3445605,49.2442297 29.6554395,49.2442297 29.0883,49.55864 L14.2009,57.75964 C13.5224271,58.1079148 12.7042354,58.0355484 12.0974246,57.5735945 C11.4906137,57.1116407 11.2030687,56.3422303 11.35818,55.59553 L14.20142,38.22553 C14.3120468,37.5647752 14.1030139,36.8906851 13.63795,36.40845 L1.5938,24.107 C1.05593046,23.5609597 0.861941478,22.7633618 1.08895299,22.0312898 C1.31596449,21.2992177 1.92718692,20.7513115 2.67963,20.60539 L19.32424,18.0711 C19.9725034,17.9662769 20.5257953,17.5450705 20.7994,16.9481 L28.2431,1.14435 C28.5505421,0.448721422 29.2394609,-5.16717968e-06 30,-5.16717968e-06 C30.7605391,-5.16717968e-06 31.4494579,0.448721422 31.7569,1.14435 Z" fill="#E3E7F2" id="Shape"/><path d="M45.3579,36.41 C44.8933016,36.8936052 44.6855527,37.5688737 44.79797,38.23 L47.63797,55.6 C47.7929131,56.345884 47.5054921,57.1144319 46.8991346,57.5756052 C46.292777,58.0367786 45.4753841,58.1085116 44.79797,57.76 L43.04797,56.8 C43.855341,56.3859367 44.2976539,55.4931951 44.13797,54.6 L41.29797,37.23 C41.1855527,36.5688737 41.3933016,35.8936052 41.8579,35.41 L53.90783,23.11 C54.6669146,22.3180842 54.6972933,21.0781385 53.9779,20.25 L56.31799,20.61 C57.0709382,20.7544339 57.6832718,21.3015689 57.911207,22.0335783 C58.1391422,22.7655877 57.9456753,23.5636351 57.40783,24.11 L45.3579,36.41 Z" fill="#A4C2F7" id="Shape"/><path d="M18.07764,36.97382 C18.1922583,36.3033523 17.9792812,35.6185065 17.50464,35.13129 L5.17383,22.67926 C4.42623813,21.9154782 4.36049454,20.7159067 5.02014,19.875 L4.11865,20.01178 C4.14893,19.96643 4.17383,19.91785 4.20765,19.875 L2.40665,20.14832 C1.63954262,20.2869337 1.01253366,20.8394374 0.778496375,21.5830058 C0.544459095,22.3265743 0.741984339,23.1385991 1.29141,23.69159 L13.62219,36.14368 C14.0968397,36.6308637 14.3097811,37.3157161 14.19507,37.98615 L11.28907,55.57086 C11.1614126,56.2365124 11.3743249,56.9219687 11.8566521,57.3981513 C12.3389794,57.874334 13.027109,58.0784409 13.69107,57.94226 C14.1378027,58.0419031 14.6055091,57.9763121 15.0076,57.75763 L16.58365,56.89709 C15.5871965,56.5894957 14.9797564,55.5836148 15.17142,54.55853 L18.07764,36.97382 Z" fill="#FFFFFF" id="Shape"/><path d="M18.14844,38.87158 C18.4633166,36.9540814 17.8494148,35.0009438 16.49414,33.6084 L7.07031,23.98291 L19.92676,22.02591 C21.8914891,21.7210725 23.5752482,20.4575107 24.417,18.65625 L30,6.80225 L35.581,18.65283 C36.4226712,20.4555677 38.1072282,21.720432 40.07319,22.02583 L52.92964,23.98283 L43.50386,33.61027 C42.1493392,35.0034307 41.5362139,36.9566633 41.85156,38.874 L44.03613,52.22166 L32.8418,46.05518 C31.0734665,45.0789497 28.9278569,45.0785721 27.15918,46.05418 L15.96387,52.22168 L18.14844,38.87158 Z" fill="url(#linearGradient-1)" id="Shape"/></g><g id="Outline"><path d="M13.87,40.24 L14.2,38.23 C14.3123679,37.5688643 14.1045968,36.8936081 13.64,36.41 L1.59,24.11 C1.05218664,23.5635995 0.858761033,22.7655408 1.0867276,22.033538 C1.31469417,21.3015353 1.9270458,20.7544186 2.68,20.61 L19.32,18.07 C19.9673992,17.9625381 20.5206736,17.5438439 20.8,16.95 L28.24,1.14 C28.5507832,0.446397569 29.2399536,5.07226368e-06 30,5.07226368e-06 C30.7600464,5.07226368e-06 31.4492168,0.446397569 31.76,1.14 L39.2,16.95 C39.4793264,17.5438439 40.0326008,17.9625381 40.68,18.07 L57.32,20.61 C58.0729542,20.7544186 58.6853058,21.3015353 58.9132724,22.033538 C59.141239,22.7655408 58.9478134,23.5635995 58.41,24.11 L46.36,36.41 C45.8954032,36.8936081 45.6876321,37.5688643 45.8,38.23 L48.64,55.6 C48.7949604,56.345888 48.507544,57.1144485 47.9011805,57.5756263 C47.2948171,58.0368041 46.4774134,58.1085294 45.8,57.76 L30.91,49.56 C30.345531,49.2400003 29.654469,49.2400003 29.09,49.56 L14.2,57.76 C13.5225866,58.1085294 12.7051829,58.0368041 12.0988195,57.5756263 C11.492456,57.1144485 11.2050396,56.345888 11.36,55.6 L12.58,48.14" id="Shape" stroke="#428DFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M18.14844,38.87158 C18.4633166,36.9540814 17.8494148,35.0009438 16.49414,33.6084 L7.07031,23.98291 L19.92676,22.02591 C21.8914891,21.7210725 23.5752482,20.4575107 24.417,18.65625 L30,6.80225 L35.581,18.65283 C36.4226712,20.4555677 38.1072282,21.720432 40.07319,22.02583 L52.92964,23.98283 L43.50386,33.61027 C42.1493392,35.0034307 41.5362139,36.9566633 41.85156,38.874 L44.03613,52.22166 L32.8418,46.05518 C31.0734665,45.0789497 28.9278569,45.0785721 27.15918,46.05418 L15.96387,52.22168 L18.14844,38.87158 Z" id="Shape" stroke="#428DFF" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13.16667" cy="44.17941" fill="#428DFF" fill-rule="nonzero" id="Oval" r="1"/></g></g></g></svg>`,
     className: "",
     iconSize: [50, 40],
     iconAnchor: [25, 20],
 });
 
-const capitalIcon = L.divIcon({
+var capitalIcon = L.divIcon({
     html: `<?xml version="1.0" ?><svg height="40px" version="1.1" viewBox="0 0 60 60" width="40px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title/><desc/><defs/><g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1"><g id="019---Star" transform="translate(0.000000, 1.000000)"><g id="Colour"><path d="M32.22661,1.14435 L39.542,16.94809 C39.8065174,17.5417153 40.3508295,17.9633542 40.99173,18.07109 L57.34936,20.60534 C58.0940129,20.763184 58.6940639,21.313222 58.9159539,22.0413618 C59.1378439,22.7695016 58.9465156,23.560701 58.41644,24.107 L46.57994,36.40845 C46.1217402,36.8944427 45.916903,37.5665973 46.02619,38.22553 L48.82041,55.59553 C48.9836915,56.3335951 48.7066699,57.0996366 48.1090816,57.5625504 C47.5114932,58.0254642 46.7005252,58.1022193 46.0267,57.75964 L31.396,49.55863 C30.8400413,49.2442133 30.1599587,49.2442133 29.604,49.55863 L14.97329,57.75963 C14.2994648,58.1022093 13.4884968,58.0254542 12.8909084,57.5625404 C12.2933201,57.0996266 12.0162985,56.3335851 12.17958,55.59552 L14.9738,38.22552 C15.083087,37.5665873 14.8782498,36.8944327 14.42005,36.40844 L2.58356,24.107 C2.0535115,23.5606949 1.86220426,22.7695083 2.08409867,22.0413849 C2.30599308,21.3132616 2.9060324,20.7632366 3.65067,20.60539 L20.0083,18.0711 C20.6492005,17.9633642 21.1935126,17.5417253 21.45803,16.9481 L28.77339,1.14435 C29.0668139,0.450707781 29.7468486,-1.07928721e-06 30.5,-1.07928721e-06 C31.2531514,-1.07928721e-06 31.9331861,0.450707781 32.22661,1.14435 Z" fill="#FFE100" id="Shape"/><path d="M37.39,13.11 C32.5890747,15.6770414 28.15587,18.8791741 24.21,22.63 C20.0044812,26.6560517 16.436883,31.2993247 13.63,36.4 L1.59009,24.11 C1.05224467,23.5636351 0.858777828,22.7655877 1.086713,22.0335783 C1.31464817,21.3015689 1.92698179,20.7544339 2.67993,20.61 L19.32007,18.07 C19.967444,17.9624793 20.520694,17.5438036 20.80007,16.95 L28.24,1.14 C28.5507895,0.446404951 29.2399578,1.95277886e-05 30,1.95277886e-05 C30.7600422,1.95277886e-05 31.4492105,0.446404951 31.76,1.14 L37.39,13.11 Z" fill="#FFB600" id="Shape"/><path d="M46.36,36.41 C45.8953952,36.8936017 45.687642,37.5688718 45.80006,38.23 L48.64,55.6 C48.7949431,56.345884 48.5075221,57.1144319 47.9011646,57.5756052 C47.294807,58.0367786 46.4774141,58.1085116 45.8,57.76 L44.05,56.8 C44.857371,56.3859367 45.2996839,55.4931951 45.14,54.6 L42.3,37.23 C42.1875977,36.5688621 42.3953735,35.8935906 42.86,35.41 L54.90992,23.11 C55.6690076,22.3180868 55.6993906,21.0781411 54.98,20.25 L57.32009,20.61 C58.0730382,20.7544339 58.6853718,21.3015689 58.913307,22.0335783 C59.1412422,22.7655877 58.9477753,23.5636351 58.40993,24.11 L46.36,36.41 Z" fill="#FFB600" id="Shape"/><path d="M14.36,54.6 C14.1698076,55.6081579 14.7621263,56.5996478 15.74,56.91 L14.2,57.76 C13.5225859,58.1085116 12.705193,58.0367786 12.0988354,57.5756052 C11.4924779,57.1144319 11.2050569,56.345884 11.36,55.6 L14.2,38.23 C14.3124023,37.5688621 14.1046265,36.8935906 13.64,36.41 L1.59009,24.11 C1.05224467,23.5636351 0.858777828,22.7655877 1.086713,22.0335783 C1.31464817,21.3015689 1.92698179,20.7544339 2.67993,20.61 L4.43993,20.34 C3.79546051,21.1725986 3.85938779,22.3519431 4.59008,23.11 L16.64,35.41 C17.1046265,35.8935906 17.3124023,36.5688621 17.2,37.23 L14.36,54.6 Z" fill="#FFFFFF" id="Shape"/><path d="M31.62,0.89 L24.3,16.45 C24.020624,17.0438036 23.467374,17.4624793 22.82,17.57 L19.33,18.1 L19.32,18.07 C19.967374,17.9624793 20.520624,17.5438036 20.8,16.95 L28.24,1.14 C28.5297679,0.494594174 29.1499551,0.0599189464 29.8554981,0.00773381748 C30.561041,-0.0444513114 31.2384306,0.294249305 31.62,0.89 Z" fill="#FFFFFF" id="Shape"/></g><g id="Outline"><circle cx="13.21299" cy="44.17941" fill="#000000" fill-rule="nonzero" id="Oval" r="1"/><path d="M13.87,40.23 L14.2,38.23 C14.3123679,37.5688643 14.1045968,36.8936081 13.64,36.41 L1.59,24.11 C1.05218664,23.5635995 0.858761033,22.7655408 1.0867276,22.033538 C1.31469417,21.3015353 1.9270458,20.7544186 2.68,20.61 L19.32,18.07 C19.9673992,17.9625381 20.5206736,17.5438439 20.8,16.95 L28.24,1.14 C28.5507832,0.446397569 29.2399536,5.07226368e-06 30,5.07226368e-06 C30.7600464,5.07226368e-06 31.4492168,0.446397569 31.76,1.14 L39.2,16.95 C39.4793264,17.5438439 40.0326008,17.9625381 40.68,18.07 L57.32,20.61 C58.0729542,20.7544186 58.6853058,21.3015353 58.9132724,22.033538 C59.141239,22.7655408 58.9478134,23.5635995 58.41,24.11 L46.36,36.41 C45.8954032,36.8936081 45.6876321,37.5688643 45.8,38.23 L48.64,55.6 C48.7949604,56.345888 48.507544,57.1144485 47.9011805,57.5756263 C47.2948171,58.0368041 46.4774134,58.1085294 45.8,57.76 L30.91,49.56 C30.345531,49.2400003 29.654469,49.2400003 29.09,49.56 L14.2,57.76 C13.5225866,58.1085294 12.7051829,58.0368041 12.0988195,57.5756263 C11.492456,57.1144485 11.2050396,56.345888 11.36,55.6 L12.58,48.13" id="Shape" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M13.63,36.4 C16.4368578,31.2993082 20.0044588,26.6560316 24.21,22.63 C28.1558735,18.8791782 32.5890776,15.677046 37.39,13.11" id="Shape" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/></g></g></g></svg>`,
     className: "",
     iconSize: [50, 40],

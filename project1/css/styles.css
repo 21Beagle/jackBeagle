@@ -121,7 +121,7 @@ select {
     margin-top: 10px;
     margin-bottom:5px;
     text-align: center;
-    color: var(--green);
+    color: var(--orange);
     height: 0.5em;
     z-index: 10000;
     bottom: 50px;
@@ -132,17 +132,148 @@ select {
     background-color: #222222;
 }
 
+.rightMargin {
+    width: 10px
+}
 
+/* clear button */
+
+.clearButton {
+    font-family: 'Quattrocento Sans', sans-serif;
+    font-weight: 1000;
+    font-size: 40px;
+    color: var(--red);
+    position:fixed;
+    z-index: 100000;
+    right: 10px;
+    top: 45px;
+}
+
+#clearButtonStyle {
+    display:none;
+    border: black 2px solid;
+    height: 30px;
+    width: 30px;
+    border-radius: 15%;
+
+    margin: 0 auto;
+    padding: 0;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+#clearButtonInner {
+    display: fixed;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+    margin-right: 0.5px;
+    top: 43px;
+    padding-right: 5px;
+}
+
+#clearButton {
+    display: none
+}
 
 /* infoTable */
 
-tr,th,td,thead,tbody,table {
-    white-space: nowrap;
-}
-.table {
-    white-space: nowrap;
+.viewPortContainer {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+    position: absolute;
+    height: 100vh;
+    width: 100%;
+    pointer-events: none;
+
 }
 
+.buttonsWidth {
+    pointer-events: none;
+    width: 52px;
+
+}
+
+.awayFromButtons {
+    width: 100%;
+    pointer-events: none;
+}
+
+.table {
+    display: 'none';
+    font-family: 'Quattrocento Sans', sans-serif;
+    position: relative;
+    white-space: nowrap;
+    text-align: center;
+    z-index: 10000;
+    left: 50%;
+    right: 50%;
+    top: 30%;
+    bottom: 50%;
+    height: 200px;
+    transform: translate(-50%, 0); 
+    min-width: 250px;
+    max-width:400px;
+}
+
+th.infoTable {
+
+    font-size: 2em;
+    font-variant: small-caps;
+}
+
+#infoHeader {
+    color: var(--blue);
+}
+
+.firstCol {
+    text-align: left;
+}
+
+.tableNumber {
+    text-align: right;
+    margin-right: 10px;
+}
+
+#informationTable {
+    display: none;
+}
+
+
+/* time table */
+
+#timeTable {
+    display: none;
+}
+
+#timeHeader {
+    color: var(--red);
+}
+
+/* city table */
+
+#cityHeader {
+    color: var(--orange);
+}
+
+#cityTable {
+    display: none;
+    pointer-events: all;
+}
+/* country flag */
+
+.countryFlag {
+    position: fixed;
+    z-index: 10000;
+    right: 10px;
+    bottom: 80px
+}
+
+#countryFlag {
+    display: none;
+}
 
 /* slider styles */ 
 
