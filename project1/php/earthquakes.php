@@ -7,7 +7,7 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='http://api.open-notify.org/iss-now.json?';
+	$url='http://api.geonames.org/earthquakesJSON?north=' . $_REQUEST['north'] . '&south='. $_REQUEST['south'] . '&east='. $_REQUEST['east'] . '&west='. $_REQUEST['west'] . '&maxRows=10&username=21beagle';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -24,7 +24,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-	$output['data'] = $decode;
+	$output['data'] = $decode['earthquakes'];
 	
 	header('Content-Type: application/json; charset=UTF-8');
 

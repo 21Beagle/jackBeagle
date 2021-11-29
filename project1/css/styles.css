@@ -275,6 +275,13 @@ th.infoTable {
     display: none;
 }
 
+/* earthquake table */
+
+#earthquakeTable {
+    height: 100px;
+    display: none
+}
+
 /* slider styles */ 
 
 input[type=range] {

@@ -40,6 +40,7 @@ var infoMarkers = new L.FeatureGroup()
 var timeMarkers = new L.FeatureGroup()
 var childrenMarkers = new L.FeatureGroup()
 var citiesMarkers = new L.FeatureGroup()
+var earthquakesMarkers = new L.FeatureGroup()
 
 var forecastMarkers = []
 var forecastTime = []
@@ -115,6 +116,12 @@ const showButtons = () => {
             forecastTimeShown.style.display = 'flex'
             // remove all other layers
     }).addTo(myMap);
+
+    earthquakesButton = L.easyButton(`<span>${earthquakeEasyButtonIcon}<span>`, function () {
+        removeMapMarkers()
+        removeTable()
+        myMap.addLayer(earthquakesMarkers)
+    }).addTo(myMap)
 }
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -131,6 +138,7 @@ const removeMapMarkers = () => {
     myMap.removeLayer(infoMarkers)
     myMap.removeLayer(citiesMarkers)
     myMap.removeLayer(forecastMarkersShown)
+    myMap.removeLayer(earthquakesMarkers)
 }
 
 const removeTable = () => {
@@ -138,6 +146,7 @@ const removeTable = () => {
     clearButton.style.display = 'none'
     informationTable.style.display = 'none'
     cityTable.style.display = 'none'
+    earthquakeTable.style.display = 'none'
 }
 
 document.getElementById('clearButton').addEventListener('click', removeTable)
@@ -235,6 +244,7 @@ window.onload = function () {
         childrenMarkers.clearLayers()
         citiesMarkers.clearLayers()
         forecastMarkersShown.clearLayers()
+        earthquakesMarkers.clearLayers()
         for (i = 0; i<40; i++) {
             forecastMarkers[i].clearLayers()
         }
@@ -245,6 +255,7 @@ window.onload = function () {
         Countries[index].info()
         Countries[index].time()
         Countries[index].cities()
+        Countries[index].earthquakes()
 
         //fly to the country
         Countries[index].flyTo()
@@ -334,6 +345,10 @@ class Country {
 
     cities() {
         getCities(this)
+    }
+
+    earthquakes() {
+        getEarthquakes(this)
     }
 }
 
@@ -438,7 +453,6 @@ const getTimezone = (Country) => {
 
             if (result.status.name == "ok") {
                 var info = result.data
-                console.log(info)
                 //set the data
                 Country.sunrise = info.sunrise
                 Country.sunset = info.sunset
@@ -634,7 +648,6 @@ const getCities = (Country) => {
                 var info = result.data
                 Country.cities = info
                 var len = info.length
-                console.log(info)
                 for (i=0;i<len;i++) {
                     var name = info[i].name
                     var pop = info[i].population
@@ -647,13 +660,12 @@ const getCities = (Country) => {
 
 
                         var capital = L.marker(latLng, {icon: capitalIcon})
-                        console.log(name,pop,wiki)
+
                         capital.name = info[i].name
                         capital.pop = info[i].population
                         capital.wiki = info[i].wikipedia
                         capital.on('click', function(markerOptions) {
-                            console.log(markerOptions)
-                            console.log(markerOptions.sourceTarget)
+
                             var name = markerOptions.sourceTarget.name
                             var population = markerOptions.sourceTarget.pop
                             var wiki = markerOptions.sourceTarget.wiki
@@ -665,15 +677,14 @@ const getCities = (Country) => {
 
 
                     } else {
-                        console.log(name,pop,wiki)
+
 
                         var city = new L.marker(latLng, {icon: cityIcon})
                         city.name = info[i].name
                         city.pop = info[i].population
                         city.wiki = info[i].wikipedia
                         city.on('click', function(markerOptions) {
-                            console.log(markerOptions)
-                            console.log(markerOptions.sourceTarget)
+
                             var name = markerOptions.sourceTarget.name
                             var population = markerOptions.sourceTarget.pop
                             var wiki = markerOptions.sourceTarget.wiki
@@ -716,6 +727,75 @@ const cityTableGenerator = (cityName, cityPopulation, cityWiki) => {
     cityWikiElement.setAttribute('href', cityWiki) 
 }
 
+const getEarthquakes = (Country) => {
+    $.ajax({
+        url: "php/earthquakes.php",
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            north: Country.north,
+            south: Country.south,
+            east: Country.east,
+            west: Country.west
+        },
+        success: function (result) {
+            JSON.stringify(result)
+            var info = result.data
+            console.log(info)
+            for (index in info) {
+                var earthquake = info[index]
+                var latLng = [earthquake.lat, earthquake.lng]
+                var magnitude = earthquake.magnitude
+                var datetime = earthquake.datetime
+                earthquakeIcon = generateEarthQuakeIcon(magnitude)
+                var earthquakeMarker = L.marker(latLng, {icon: earthquakeIcon})
+                earthquakeMarker.magnitude = magnitude
+                earthquakeMarker.datetime = datetime
+                earthquakeMarker.on('click', function(markerOptions) {
+
+                    var date = markerOptions.sourceTarget.datetime
+                    var magnitude = markerOptions.sourceTarget.magnitude
+
+                    earthquakeTableGenerator(date, magnitude)
+                    })
+
+
+                earthquakeMarker.addTo(earthquakesMarkers)
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+
+            console.log(jqXHR)
+            console.log(textStatus)
+            console.log(errorThrown)
+        }
+    })
+} 
+
+const earthquakeTableGenerator = (date, magnitude) => {
+    if (magnitude < 5.4 ) {
+        var color = '#9CE37D'
+    } else if (magnitude < 6.9) {
+        var color = '#7FC8F8'
+    } else if (magnitude < 7.9) {
+        var color = '#F9C22E'
+    } else {
+        var color = '#FE5F55'
+    }
+
+    clearButton.style.display = 'inline-block'
+    var earthquakeTable = document.getElementById('earthquakeTable')
+    earthquakeTable.style.display = 'table'
+
+    var dateElement = document.getElementById('earthquakeDate')
+    dateElement.innerHTML = date
+    dateElement.style.color = color
+
+
+    var magnitudeElement = document.getElementById('magnitude')
+    magnitudeElement.innerHTML = magnitude
+
+}
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
 // │ The Icons and icon generator functions                                       │
@@ -795,6 +875,32 @@ var capitalIcon = L.divIcon({
     iconSize: [50, 40],
     iconAnchor: [25, 20],
 });
+
+var generateEarthQuakeIcon = (magnitude) => {
+    if (magnitude < 5.4 ) {
+        var color = '#9CE37D'
+        var size = 15
+    } else if (magnitude < 6.9) {
+        var color = '#7FC8F8'
+        var size = 25
+    } else if (magnitude < 7.9) {
+        var color = '#F9C22E'
+        var size = 50
+    } else {
+        var color = '#FE5F55'
+        var size = 100
+    }
+    var earthquakeIcon = L.divIcon({
+        html: `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Disc</title><circle cx="256" cy="256" r="208" fill="none" stroke="${color}" stroke-miterlimit="10" stroke-width="32"/><circle cx="256" cy="256" r="96" fill="none" stroke="${color}" stroke-miterlimit="10" stroke-width="32"/><circle cx="256" cy="256" r="32" stroke="${color}" fill="${color}" /></svg>`,
+        className: '',
+        iconSize: [size,size],
+        iconAnchor: [0,0]
+    }) 
+    return earthquakeIcon
+}
+
+const earthquakeEasyButtonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Disc</title><circle cx="256" cy="256" r="208" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><circle cx="256" cy="256" r="96" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><circle cx="256" cy="256" r="32"/></svg>`
+
 
 // random colouring for the country outlines to keep the project visually interesting
 function countryOutline(feature) {
