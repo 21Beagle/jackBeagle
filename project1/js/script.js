@@ -887,7 +887,6 @@ const getSatellites = (Country) => {
     radius = parseInt(radius)
     // we also never want it to be more than 50
     radius = Math.min(radius, 50)
-    console.log(radius)
     $.ajax({
         url: "php/satellites.php",
         type: 'GET',
@@ -902,7 +901,6 @@ const getSatellites = (Country) => {
             JSON.stringify(result)
 
             var info = result.data.above
-            console.log(info)
             info.sort(() => (Math.random() > .5) ? 1 : -1);
             for (index in info) {
                 if (index > radius) break // use radius that we created earlier to make a nice bound for how many we display on map
@@ -924,11 +922,9 @@ const getSatellites = (Country) => {
                     var id = markerOptions.sourceTarget.id
                     var latLng = markerOptions.sourceTarget.latLng
                     var colour = markerOptions.sourceTarget.colour
-                    console.log(markerOptions)
 
                     satelliteTableGenerator(name, latLng, date, id, colour)
                     }).addTo(satelliteMarkers)
-                console.log(satelliteMarker)
             }
 
 
