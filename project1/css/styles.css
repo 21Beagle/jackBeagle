@@ -7,6 +7,7 @@
     --orange: #F9C22E;
     --blue: #7FC8F8;
     --green: #9CE37D;
+    --yellow: #FDE74C
 }
 
 body {
@@ -281,6 +282,30 @@ th.infoTable {
 #earthquakeTable {
     height: 100px;
     display: none
+}
+
+/* Money Table  */
+
+#moneyHeader {
+    color: var(--yellow);
+}
+
+#moneyTable {
+    display: none;
+    pointer-events: all;
+    height: 150px;
+}
+
+/* satellite Table  */
+
+#satelliteHeader {
+    color: var(--yellow);
+}
+
+#satelliteTable {
+    display: none;
+    pointer-events: all;
+    height: 150px;
 }
 
 /* slider styles */ 

@@ -28,6 +28,8 @@ var forecastTimeShown = document.getElementById('forecastTime')
 var informationTable = document.getElementById("informationTable")
 var cityTable = document.getElementById('cityTable')
 var timeTable = document.getElementById("timeTable")
+var moneyTable = document.getElementById('moneyTable')
+var satelliteTable = document.getElementById('satelliteTable')
 
 var countryFlag = document.getElementById('countryFlag')
 
@@ -41,6 +43,7 @@ var timeMarkers = new L.FeatureGroup()
 var childrenMarkers = new L.FeatureGroup()
 var citiesMarkers = new L.FeatureGroup()
 var earthquakesMarkers = new L.FeatureGroup()
+var satelliteMarkers = new L.FeatureGroup()
 
 var forecastMarkers = []
 var forecastTime = []
@@ -122,6 +125,19 @@ const showButtons = () => {
         removeTable()
         myMap.addLayer(earthquakesMarkers)
     }).addTo(myMap)
+
+    moneyButton = L.easyButton(`<span>$</span>`, function () {
+        removeMapMarkers()
+        removeTable()
+        moneyTable.style.display = 'table'
+        clearButton.style.display = 'inline-block'
+    }).addTo(myMap)
+
+    satelliteButton = L.easyButton(`<span>${satelliteEasyButton}</span>`, function(){
+        removeMapMarkers()
+        removeTable()
+        myMap.addLayer(satelliteMarkers)
+    }).addTo(myMap)
 }
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -139,6 +155,7 @@ const removeMapMarkers = () => {
     myMap.removeLayer(citiesMarkers)
     myMap.removeLayer(forecastMarkersShown)
     myMap.removeLayer(earthquakesMarkers)
+    myMap.removeLayer(satelliteMarkers)
 }
 
 const removeTable = () => {
@@ -147,6 +164,8 @@ const removeTable = () => {
     informationTable.style.display = 'none'
     cityTable.style.display = 'none'
     earthquakeTable.style.display = 'none'
+    moneyTable.style.display = 'none'
+    satelliteTable.style.display = 'none'
 }
 
 document.getElementById('clearButton').addEventListener('click', removeTable)
@@ -248,6 +267,7 @@ window.onload = function () {
         for (i = 0; i<40; i++) {
             forecastMarkers[i].clearLayers()
         }
+        satelliteMarkers.clearLayers()
 
 
         //perform the data grabs for the new country
@@ -256,6 +276,8 @@ window.onload = function () {
         Countries[index].time()
         Countries[index].cities()
         Countries[index].earthquakes()
+        Countries[index].money()
+        Countries[index].satellites()
 
         //fly to the country
         Countries[index].flyTo()
@@ -349,6 +371,14 @@ class Country {
 
     earthquakes() {
         getEarthquakes(this)
+    }
+
+    money() {
+        getMoney(this)
+    }
+
+    satellites() {
+        getSatellites(this)
     }
 }
 
@@ -757,7 +787,7 @@ const getEarthquakes = (Country) => {
                     var magnitude = markerOptions.sourceTarget.magnitude
 
                     earthquakeTableGenerator(date, magnitude)
-                    })
+                })
 
 
                 earthquakeMarker.addTo(earthquakesMarkers)
@@ -795,6 +825,142 @@ const earthquakeTableGenerator = (date, magnitude) => {
     var magnitudeElement = document.getElementById('magnitude')
     magnitudeElement.innerHTML = magnitude
 
+}
+
+const getMoney = (Country) => {
+    $.ajax({
+        url: "php/money.php",
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            countryCode: Country.a2
+        },
+
+        success: function (result) {
+            JSON.stringify(result)
+
+            if (result.status.name == "ok") {
+                var info = result.data[1][0]
+                var header = info.name
+                var capital = info.capitalCity 
+                var incomeType = info.incomeLevel.value
+                var region = info.region.value
+                var lendingType = info.lendingType.value
+
+                var infoHeader = document.getElementById("moneyHeader")
+                infoHeader.innerHTML = header
+
+                var moneyCapital = document.getElementById("moneyCapital")
+                moneyCapital.innerHTML = capital
+                
+                var moneyIncomeLevel = document.getElementById("incomeLevel")
+                moneyIncomeLevel.innerHTML = incomeType
+                
+                var moneyRegion = document.getElementById("moneyRegion")
+                moneyRegion.innerHTML = region
+                
+                var moneyLendingType = document.getElementById("lendingType")
+                moneyLendingType.innerHTML = lendingType
+
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR)
+            console.log(textStatus)
+            console.log(errorThrown)
+        }
+    });
+} 
+
+const getSatellites = (Country) => {
+    var lat = Country.mid.lat
+    var lng = Country.mid.lng
+    var bounds = Country.bounds
+    var latLen = bounds._northEast.lat - bounds._southWest.lat
+    var lngLen = bounds._northEast.lng - bounds._southWest.lng
+    // we want something that maps 104 -> 45 ¬based on usa
+    // and 10 -> 10
+    // doing a small amount of math I came to the following function
+    
+    var radius = Math.max(lngLen, latLen)
+    radius = -5+3*(3*radius+2)**0.5
+    radius = parseInt(radius)
+    // we also never want it to be more than 50
+    radius = Math.min(radius, 50)
+    console.log(radius)
+    $.ajax({
+        url: "php/satellites.php",
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            lat: lat,
+            lng: lng,
+            radius: radius
+        },
+
+        success: function(result) {
+            JSON.stringify(result)
+
+            var info = result.data.above
+            console.log(info)
+            info.sort(() => (Math.random() > .5) ? 1 : -1);
+            for (index in info) {
+                if (index > radius) break // use radius that we created earlier to make a nice bound for how many we display on map
+                var satellite = info[index]
+                var latLng = [info[index].satlat, info[index].satlng]
+                var colours = ['#9CE37D', '#7FC8F8', '#F9C22E', '#FE5F55', '#ECBA82', '#EACBD2', '#06D6A0', '#9DACFF']
+                var colour = colours[Math.floor(Math.random() * colours.length)]
+                var satelliteMarker = L.marker(latLng, {icon: generateSatelliteIcon(colour)})
+                satelliteMarker.name = satellite.satname
+                satelliteMarker.latLng = latLng
+                satelliteMarker.id = satellite.intDesignator
+                satelliteMarker.date = satellite.launchDate
+                satelliteMarker.colour = colour
+
+                satelliteMarker.on('click', function(markerOptions) {
+
+                    var date = markerOptions.sourceTarget.date
+                    var name = markerOptions.sourceTarget.name
+                    var id = markerOptions.sourceTarget.id
+                    var latLng = markerOptions.sourceTarget.latLng
+                    var colour = markerOptions.sourceTarget.colour
+                    console.log(markerOptions)
+
+                    satelliteTableGenerator(name, latLng, date, id, colour)
+                    }).addTo(satelliteMarkers)
+                console.log(satelliteMarker)
+            }
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR)
+            console.log(textStatus)
+            console.log(errorThrown)
+        }
+    })
+}
+
+
+const satelliteTableGenerator = (name, latLng, launchDate, intId, colour) => {
+
+    clearButton.style.display = 'inline-block'
+    var earthquakeTable = document.getElementById('satelliteTable')
+    earthquakeTable.style.display = 'table'
+    
+
+    var satnameElement = document.getElementById('satelliteHeader')
+    satnameElement.innerHTML = name
+    satnameElement.style.color = colour
+
+    var dateElement = document.getElementById('satelliteDate')
+    dateElement.innerHTML = launchDate
+
+    var satLatLng = document.getElementById('satelliteLatLng')
+    satLatLng.innerHTML = latLng
+
+    var satId = document.getElementById('satelliteId')
+    satId.innerHTML = intId
 }
 
 // ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -901,6 +1067,19 @@ var generateEarthQuakeIcon = (magnitude) => {
 
 const earthquakeEasyButtonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Disc</title><circle cx="256" cy="256" r="208" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><circle cx="256" cy="256" r="96" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><circle cx="256" cy="256" r="32"/></svg>`
 
+const generateSatelliteIcon = (colour) => {
+
+    var satelliteIcon = L.divIcon({
+        html: `<?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" stroke='${colour}' fill='${colour}' viewBox="0 0 122.88 122.88" style="enable-background:new 0 0 122.88 122.88" xml:space="preserve"><g><path d="M5.49,79.09l37.86,37.86C66.37,99.1,36.69,54.35,5.49,79.09L5.49,79.09z M42.39,62.21l18.29,18.29 c1.18,1.18,3.12,1.18,4.3,0l24.2-24.2c6.21-6.21,6.21-16.38,0-22.59v0c-6.21-6.21-16.38-6.21-22.59,0l-24.2,24.2 C41.2,59.09,41.2,61.02,42.39,62.21L42.39,62.21z M24.5,104.83L20.33,109c-1.48,1.48-3.89,1.48-5.38,0c-1.48-1.49-1.48-3.89,0-5.38 l4.17-4.17l-17-17l0.01-0.01c-0.13-0.13-0.25-0.26-0.36-0.4C0.15,80,0.49,77.01,2.54,75.38c13.15-10.43,26.24-10.1,36.28-4.46 c1.85,1.04,3.59,2.26,5.2,3.64l1.99-1.99l-6.99-6.99c-1.52-1.52-2.28-3.52-2.28-5.51c0-1.99,0.76-3.99,2.28-5.51l5.92-5.92 l-5.11-5.11l-3.76,3.76h0c-1.22,1.22-2.83,1.84-4.44,1.84c-1.59,0-3.19-0.61-4.42-1.84l-0.01-0.01l-0.01,0.01h0L3.53,23.62 c-1.22-1.22-1.84-2.83-1.84-4.44c0-1.59,0.62-3.19,1.85-4.43l-0.01-0.01L16.44,1.84l0,0c0.16-0.16,0.33-0.31,0.51-0.44 C18.09,0.47,19.48,0,20.87,0c1.59,0,3.19,0.61,4.42,1.84l0.01,0.01l0.01-0.01l0,0L48.97,25.5v0c1.22,1.22,1.84,2.83,1.84,4.44 c0,1.6-0.61,3.21-1.84,4.44v0l-3.77,3.77l5.11,5.11l12.91-12.91c4.03-4.03,9.35-6.05,14.66-6.05c5.31,0,10.62,2.02,14.66,6.05v0 c4.03,4.03,6.05,9.35,6.05,14.66c0,5.31-2.02,10.62-6.05,14.66L79.63,72.56l5.11,5.11l3.77-3.76c1.22-1.22,2.83-1.84,4.44-1.84 c1.6,0,3.21,0.61,4.44,1.84l23.66,23.66l0,0c1.22,1.22,1.84,2.83,1.84,4.44c0,1.6-0.61,3.21-1.84,4.44l0,0l-12.91,12.91 c-1.22,1.22-2.83,1.84-4.44,1.84c-1.6,0-3.21-0.61-4.44-1.84L75.6,95.69c-1.22-1.22-1.84-2.83-1.84-4.44 c0-1.59,0.61-3.19,1.84-4.42l0.01-0.01l-0.01-0.01l3.76-3.77l-5.11-5.11l-5.92,5.92c-1.52,1.52-3.52,2.28-5.51,2.28 c-1.99,0-3.99-0.76-5.51-2.28l-5.92-5.92l-2.15,2.15c2.47,3.26,4.37,6.93,5.57,10.75c3.27,10.41,1.4,21.91-8.23,29.61 c-1.86,1.73-4.78,1.68-6.59-0.13L24.5,104.83L24.5,104.83z M0.13,106.96c-0.53-1.89,0.57-3.86,2.47-4.39 c1.89-0.53,3.86,0.57,4.39,2.47c1,3.53,2.38,6.2,4.16,7.99c1.6,1.61,3.6,2.53,6.03,2.73c1.96,0.16,3.42,1.88,3.26,3.85 c-0.16,1.96-1.88,3.42-3.85,3.26c-4.17-0.36-7.65-1.98-10.48-4.83C3.45,115.38,1.47,111.67,0.13,106.96L0.13,106.96z"/></g></svg>`,
+        className: "",
+        iconSize: [25,25],
+        iconAnchor: [0,0],
+        colour: colour
+    })
+    return satelliteIcon
+}
+
+const satelliteEasyButton = `<?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"' viewBox="0 0 122.88 122.88" style="enable-background:new 0 0 122.88 122.88" xml:space="preserve"><g><path d="M5.49,79.09l37.86,37.86C66.37,99.1,36.69,54.35,5.49,79.09L5.49,79.09z M42.39,62.21l18.29,18.29 c1.18,1.18,3.12,1.18,4.3,0l24.2-24.2c6.21-6.21,6.21-16.38,0-22.59v0c-6.21-6.21-16.38-6.21-22.59,0l-24.2,24.2 C41.2,59.09,41.2,61.02,42.39,62.21L42.39,62.21z M24.5,104.83L20.33,109c-1.48,1.48-3.89,1.48-5.38,0c-1.48-1.49-1.48-3.89,0-5.38 l4.17-4.17l-17-17l0.01-0.01c-0.13-0.13-0.25-0.26-0.36-0.4C0.15,80,0.49,77.01,2.54,75.38c13.15-10.43,26.24-10.1,36.28-4.46 c1.85,1.04,3.59,2.26,5.2,3.64l1.99-1.99l-6.99-6.99c-1.52-1.52-2.28-3.52-2.28-5.51c0-1.99,0.76-3.99,2.28-5.51l5.92-5.92 l-5.11-5.11l-3.76,3.76h0c-1.22,1.22-2.83,1.84-4.44,1.84c-1.59,0-3.19-0.61-4.42-1.84l-0.01-0.01l-0.01,0.01h0L3.53,23.62 c-1.22-1.22-1.84-2.83-1.84-4.44c0-1.59,0.62-3.19,1.85-4.43l-0.01-0.01L16.44,1.84l0,0c0.16-0.16,0.33-0.31,0.51-0.44 C18.09,0.47,19.48,0,20.87,0c1.59,0,3.19,0.61,4.42,1.84l0.01,0.01l0.01-0.01l0,0L48.97,25.5v0c1.22,1.22,1.84,2.83,1.84,4.44 c0,1.6-0.61,3.21-1.84,4.44v0l-3.77,3.77l5.11,5.11l12.91-12.91c4.03-4.03,9.35-6.05,14.66-6.05c5.31,0,10.62,2.02,14.66,6.05v0 c4.03,4.03,6.05,9.35,6.05,14.66c0,5.31-2.02,10.62-6.05,14.66L79.63,72.56l5.11,5.11l3.77-3.76c1.22-1.22,2.83-1.84,4.44-1.84 c1.6,0,3.21,0.61,4.44,1.84l23.66,23.66l0,0c1.22,1.22,1.84,2.83,1.84,4.44c0,1.6-0.61,3.21-1.84,4.44l0,0l-12.91,12.91 c-1.22,1.22-2.83,1.84-4.44,1.84c-1.6,0-3.21-0.61-4.44-1.84L75.6,95.69c-1.22-1.22-1.84-2.83-1.84-4.44 c0-1.59,0.61-3.19,1.84-4.42l0.01-0.01l-0.01-0.01l3.76-3.77l-5.11-5.11l-5.92,5.92c-1.52,1.52-3.52,2.28-5.51,2.28 c-1.99,0-3.99-0.76-5.51-2.28l-5.92-5.92l-2.15,2.15c2.47,3.26,4.37,6.93,5.57,10.75c3.27,10.41,1.4,21.91-8.23,29.61 c-1.86,1.73-4.78,1.68-6.59-0.13L24.5,104.83L24.5,104.83z M0.13,106.96c-0.53-1.89,0.57-3.86,2.47-4.39 c1.89-0.53,3.86,0.57,4.39,2.47c1,3.53,2.38,6.2,4.16,7.99c1.6,1.61,3.6,2.53,6.03,2.73c1.96,0.16,3.42,1.88,3.26,3.85 c-0.16,1.96-1.88,3.42-3.85,3.26c-4.17-0.36-7.65-1.98-10.48-4.83C3.45,115.38,1.47,111.67,0.13,106.96L0.13,106.96z"/></g></svg>`
 
 // random colouring for the country outlines to keep the project visually interesting
 function countryOutline(feature) {
