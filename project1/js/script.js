@@ -940,6 +940,8 @@ const getSatellites = (Country) => {
 
 const satelliteTableGenerator = (name, latLng, launchDate, intId, colour) => {
 
+    latLng = `${latLng[0]}, ${latLng[1]}`
+
     clearButton.style.display = 'inline-block'
     var earthquakeTable = document.getElementById('satelliteTable')
     earthquakeTable.style.display = 'table'
